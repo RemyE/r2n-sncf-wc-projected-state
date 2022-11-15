@@ -1,19 +1,19 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # Nom du fichier : ExclusionList.py
-# Description du fichier : classe "ExclusionList. Gère la liste d'exclusion des dossiers parquet
+# Description du fichier : classe "ExclusionList". Gère la liste d'exclusion des dossiers parquet
 # Date de création : 15/11/2022
 # Date de mise à jour : 15/11/2022
 # Créé par : Rémy EVRARD
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
-# Imports de libraries
+# Imports des libraries
 import logging as log
 import os
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
-# Imports de classes
+# Imports des classes
 from ProjectRootPath import ProjectRootPath
 from Paths import Paths
 # ----------------------------------------------------------------------------------------------------------------------
@@ -28,10 +28,6 @@ class ExclusionList:
     def __init__(self, create_file):
         # Logging
         self.__logger = log.getLogger("ExclusionList")
-
-        # Chemin d'accès au projet
-        project_path = ProjectRootPath()
-        root_folder_path = project_path.get_project_path()
 
         # Chemins d'accès
         self.__paths = Paths()
@@ -56,7 +52,8 @@ class ExclusionList:
         try:
             open(self.__exclusion_list_file_path, 'w').close()
         except IOError:
-            self.__logger.error("Unable to clear the parquet exclusion list in \'%s\'" % self.__exclusion_list_file_path)
+            self.__logger.error("Unable to clear the parquet exclusion list in \'%s\'" %
+                                self.__exclusion_list_file_path)
 
         # Réécriture de l'entête
         with open(self.__exclusion_list_file_path, "a+") as exclusion_listFile:
@@ -165,3 +162,11 @@ class ExclusionList:
 
         # Retourne la liste des dossiers ôtée des dossiers exclus
         return parquet_folder_list
+
+    def get_nb_excluded_folder(self):
+        """
+        Renvoie le nombre de dossiers exclus
+        :return: len(self.get_excluded()): nombre de dossiers exclus
+        """
+
+        return len(self.get_excluded())

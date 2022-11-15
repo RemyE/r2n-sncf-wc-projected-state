@@ -1,20 +1,20 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # Nom du fichier : ProjectRootPath.py
-# Description du fichier : classe "ProjectPath. Défini le chemin d'accès de la racine du projet
+# Description du fichier : classe "ProjectPath". Définit le chemin d'accès de la racine du projet
 # Date de création : 14/11/2022
 # Date de mise à jour : 15/11/2022
 # Créé par : Rémy EVRARD
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
-# Imports de libraries
+# Imports des libraries
 import logging as log
 # ----------------------------------------------------------------------------------------------------------------------
 
 
 class ProjectRootPath:
     """
-    Défini le chemin d'accès de la racine du projet
+    Définit le chemin d'accès de la racine du projet
     """
 
     def __init__(self):
@@ -33,7 +33,7 @@ class ProjectRootPath:
         """
 
         # TODO : REMPLACER ICI CE CHEMIN D'ACCÈS AVEC VOTRE CHEMIN D'ACCÈS AU DOSSIER DU PROJET VIA L'EXPLORATEUR
-        #  WINDOWS (exemple : "C:\Users\Bernard\Documents\ESTACA 2022-2023\Projet industriel")
+        #  WINDOWS (exemple : r"C:\Users\Bernard\Documents\ESTACA 2022-2023\Projet industriel")
         self.__project_path = r"D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel"
 
     def get_project_path(self):

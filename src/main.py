@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------------------------------------------------
-# Description du projet : traitement des données WC R2N SNCF. Analyse des données et formatage de celles-ci
+# Description du projet : traitement des données WC R2N SNCF. Analyse les données et formate celles-ci
 # Date de création : 29/10/2022
 # Date de mise à jour : 15/11/2022
 # Version : 1.0a1
@@ -14,13 +14,15 @@
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
-# Imports de libraries
+# Imports des libraries
 import logging as log
+import os.path
 import pathlib as pl
+import time
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
-# Imports de classes
+# Imports des classes
 from Parquet import Parquet
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -30,8 +32,18 @@ def configure_log():
     Configuration du log
     """
 
+    # Chemin d'accès du dossier de log
+    log_folder_path = ((pl.Path(__file__)).parent.parent.joinpath("log"))
+
     # Chemin d'accès du fichier log
-    log_path = ((pl.Path(__file__)).parent.parent.joinpath("log")).joinpath("app.log")
+    log_path = log_folder_path.joinpath("app.log")
+
+    # Détection de l'existence du dossier de log et création du dossier s'il n'existe pas
+    if not os.path.exists(log_folder_path):
+        try:
+            os.mkdir(log_folder_path)
+        except OSError as error:
+            print("Unable to create log folder. Reason: " + str(error))
 
     # Suppression du contenu du log
     try:
@@ -45,6 +57,8 @@ def configure_log():
                     format=FORMAT)
     log.getLogger("main")
 
+    log.info("Log initialized")
+
 
 if __name__ == "__main__":
     """
@@ -52,6 +66,9 @@ if __name__ == "__main__":
         - renseigner le chemin d'accès de votre projet dans ProjectRootPath.py ;
         - glisser les dossiers parquet (exemple : "z5500503_20221001_031745_0") dans le dossier "Source".
     """
+
+    # Début de mesure de temps écoulé
+    start_time = time.time()
 
     # Configuration du log
     configure_log()
@@ -61,6 +78,14 @@ if __name__ == "__main__":
     # Fusionne les dossiers parquets pour lesquels il y a suite dans l'envoi des informations (soit pour une marche
     # d'exploitation supérieure à 30 minutes)
     parquet = Parquet(check_files=True, merge_parquet=True)
+
+    # Fin de mesure de temps écoulé
+    stop_time = time.time()
+    # Temps écoulé pour l'opération
+    elapsed_time = str(round((stop_time - start_time), 3))
+
+    # Signaliement du temps d'exécution
+    log.info("Program successfully executed in %s seconds" % elapsed_time)
 
     # Todo : fonctions ci-dessous, dont l'ordre est à respecter. Envisager de mettre ces fonctions dans une classe
     #   gérant les fichiers parquets. Le nom des fonctions n'est pas exhaustif. Inclure ces fonctions dans des classes

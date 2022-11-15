@@ -7,17 +7,18 @@
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
-# Imports de libraries
+# Imports des libraries
 import logging as log
 import os
 from pathlib import Path
 import pathlib as pl
 import platform
 from subprocess import call
+import shutil as shu
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
-# Imports de classes
+# Imports des classes
 from ProjectRootPath import ProjectRootPath
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -116,11 +117,17 @@ class Paths:
         # On créé les dossiers avec le niveau le plus faible ; les dossiers parents se créent automatiquement
         # s'ils n'existent pas
 
-        pl.Path(self.__paths["CSV_2"]).mkdir(parents=True, exist_ok=True)
-        pl.Path(self.__paths["Source_3"]).mkdir(parents=True, exist_ok=True)
-        pl.Path(self.__paths["Edited_3"]).mkdir(parents=True, exist_ok=True)
-        pl.Path(self.__paths["Temp_TT_4"]).mkdir(parents=True, exist_ok=True)
-        pl.Path(self.__paths["Temp_CTXT_4"]).mkdir(parents=True, exist_ok=True)
+        # Liste des dossiers à créer
+        folder_to_create = ["Data_1", "CSV_2", "Parquet_2", "Source_3", "Edited_3", "Temp_parquet_merge_3", "Temp_TT_4",
+                            "Temp_CTXT_4"]
+
+        # Génération d'une liste de chemin d'accès
+        folder_to_create_path = []
+        for folder in folder_to_create:
+            folder_to_create_path.append(self.get_path(folder))
+
+        # Création des dossiers
+        self.create_folder(folder_to_create_path)
 
     def __set_source_parquet(self):
         """
@@ -220,8 +227,8 @@ class Paths:
                 call(["chflags", "hidden", path])
 
         else:
-            self.__logger.warning("Unable to hide folder under path \'%s\'. Unknow operating system. Only Windows and Darwin ["
-                        "Mac] are supported" % path)
+            self.__logger.warning("Unable to hide folder under path \'%s\'. Unknow operating system. Only Windows and "
+                                  "Darwin [Mac] are supported" % path)
 
     def get_source_folder_list(self):
         """
@@ -230,3 +237,35 @@ class Paths:
         """
 
         return os.listdir(self.get_path("Source"))
+
+    def delete_folder(self, path):
+        """
+        Suppression d'une liste de dossier
+        :param path: chemin d'accès du dossier à supprimer
+        """
+
+        for folder in path:
+            if os.path.exists(folder):
+                # Suppression du dossier
+                try:
+                    shu.rmtree(folder)
+                    self.__logger.info("Deleted directory in path \'%s\'" % folder)
+                except OSError as error:
+                    self.__logger.error(
+                        "Unable to delete directory in path \'%s\'. Reason: %s" % (folder, error))
+
+    def create_folder(self, path):
+        """
+        Suppression d'une liste de dossier
+        :param path: chemin d'accès du dossier à créer
+        """
+
+        for folder in path:
+            if not os.path.exists(folder):
+                # Création du dossier
+                try:
+                    os.makedirs(folder)
+                    self.__logger.info("Created directory in path \'%s\'" % folder)
+                except OSError as error:
+                    self.__logger.error(
+                        "Unable to create directory in path \'%s\'. Reason: %s" % (folder, error))
