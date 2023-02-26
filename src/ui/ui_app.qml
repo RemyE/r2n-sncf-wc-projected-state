@@ -16,7 +16,7 @@ Window {
     property string backgroundColor: "#000000"
 
     // Fonctions pour changer la page active
-    function return() {
+    function go_back() {
         operation.visible = false
         train.visible = false
         main.visible = true
