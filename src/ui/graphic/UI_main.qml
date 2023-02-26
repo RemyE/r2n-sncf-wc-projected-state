@@ -7,6 +7,178 @@ import "../components"
 Item {
     id: root
 
-    
+    // Prorpriétés sur la liste des marches
+    property var operationNames: []
+    property var operationSources: []
 
+    // Propriété sur la liste des rames
+    property var trainNames: []
+    property var trainSources: []
+
+    // Propriétés sur les couleurs utilisées
+    property string backgroundColor: "#000000"
+    property string textColor: "#C8C8C8"
+    property string borderColor: "#C8C8C8"
+
+
+    // Signaux à surchager en QML ou en Python
+    signal operationClicked(string text)
+    signal trainClicked(string text)
+
+
+
+    // Listview pour les marches
+    Rectangle {
+        id: operationBody
+
+        anchors.left: parent.left
+        anchors.right: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.top: parent.top
+        anchors.margins: 12
+
+        color: root.backgroundColor
+        border.width: 2
+        border.color: root.borderColor
+
+
+
+        // Rectangle pour le titre
+        Rectangle {
+            id: operationTitle
+
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            height: 36
+
+            color: root.backgroundColor
+            border.width: 2
+            border.color: root.borderColor
+
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                text: "Marches"
+                font.pixelSize: 24
+                font.family: "Verdana"
+                color: root.textColor
+            }
+        }
+
+        // Liste des marches à visualiser
+        ListView {
+            id: operationView
+
+            anchors.left: parent.left
+            anchors.leftMargin: operationBody.border.width
+            anchors.right: parent.right
+            anchors.rightMargin: operationBody.border.width
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: operationBody.border.width
+            anchors.top: operationTitle.bottom
+
+            flickableDirection: Flickable.VerticalFlick
+            boundsBehavior: Flickable.StopAtBounds
+            clip: true
+            spacing: 0
+
+            model: Math.min(root.operationNames.length, root.operationSources.length)
+
+            delegate: UI_selector {
+                anchors.left: parent ? parent.left : undefined
+                anchors.right: parent ? parent.right : undefined
+
+                path: "../assets/operations/"
+                name: root.operationNames[index]
+                source: root.operationSources[index]
+
+
+                // Répétition des signaux
+                onClicked: function(text) {root.operationClicked(text)}
+            }
+
+            ScrollBar.vertical: ScrollBar {}
+        }
+    }
+
+
+    // Listview pour les rames
+    Rectangle {
+        id: trainBody
+
+        anchors.left: parent.horizontalCenter
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.top: parent.top
+        anchors.margins: 12
+
+        color: root.backgroundColor
+        border.width: 2
+        border.color: root.borderColor
+
+
+
+        // Rectangle pour le titre
+        Rectangle {
+            id: trainTitle
+
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            height: 36
+
+            color: root.backgroundColor
+            border.width: 2
+            border.color: root.borderColor
+
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                text: "Rames"
+                font.pixelSize: 24
+                font.family: "Verdana"
+                color: root.textColor
+            }
+        }
+
+        // Liste des marches à visualiser
+        ListView {
+            id: trainView
+
+            anchors.left: parent.left
+            anchors.leftMargin: trainBody.border.width
+            anchors.right: parent.right
+            anchors.rightMargin: trainBody.border.width
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: trainBody.border.width
+            anchors.top: trainTitle.bottom
+
+            flickableDirection: Flickable.VerticalFlick
+            boundsBehavior: Flickable.StopAtBounds
+            clip: true
+            spacing: 0
+
+            model: Math.min(root.trainNames.length, root.trainSources.length)
+
+            delegate: UI_selector {
+                anchors.left: parent ? parent.left : undefined
+                anchors.right: parent ? parent.right : undefined
+
+                path: "../assets/trains/"
+                name: root.trainNames[index]
+                source: root.trainSources[index]
+
+
+                // Répétition des signaux
+                onClicked: function(text) {root.trainClicked(text)}
+            }
+
+            ScrollBar.vertical: ScrollBar {}
+        }
+    }
 }
