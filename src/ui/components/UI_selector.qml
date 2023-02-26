@@ -14,16 +14,16 @@ import QtQuick.Controls 2.15
 Item {
     id: root
 
-    // Composant à placer avec les ancres. aucune dimensions à placer
-    anchors.fill: parent
+    width: selectorBody.width
+    height: selectorBody.height
 
     // Propriétés sur l'image
-    property string image: ""
-    readonly property string path: "../assets"
+    property string source: ""
+    property string path: "../assets/"
 
     // Propriété sur le nom de la mission
     property int fontSize: 12
-    property string missionName: ""
+    property string name: ""
 
     // Propriétés sur les couleurs utilisées
     property string backgroundColor: "#000000"
@@ -37,70 +37,74 @@ Item {
 
     // Rectangle pour la couleur du fond du bouton
     Rectangle{
-        id: body
+        id: selectorBody
+
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: selectorImage.height + root.fontSize * 1.5
+
+
+        color: root.backgroundColor
+        border.width: 1
+        border.color: borderColor
+    }
+
+
+    // Image centrée sur le bouton
+    Image {
+        id: selectorImage
+
+        anchors.top: parent.top
+        anchors.topMargin: selectorBody.border.width
+        anchors.left: parent.left
+        anchors.leftMargin: selectorBody.border.width
+        anchors.right: parent.right
+        anchors.rightMargin: selectorBody.border.width
+        fillMode: Image.PreserveAspectFit
+
+        source: root.source !== "" ? (root.path + root.source)
+                                   : ""
+    }
+
+    // Texte visible au centre du bouton
+    Text{
+        id: selectorText
+
+        anchors.top: selectorImage.bottom
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: selectorBody.border.width
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        text: root.name
+        font.pixelSize: root.fontSize
+        font.family: "Verdana"
+        color: root.textColor
+    }
+
+    // Zone de détection de souris pour détecter les clics
+    MouseArea{
+        id: selectorArea
 
         anchors.fill: parent
 
-        color: root.backgroundColor
-        border.width: 2
-        border.color: borderColor
+        hoverEnabled: true
+        enabled: true
 
 
+        // Répétition des signaux
+        onClicked: root.clicked(root.name)
+    }
 
-        // Image centrée sur le bouton
-        Image {
-            id: image
+    // Rectangle pour le highlight
+    Rectangle {
+        id: selectorHighlight
 
-            anchors.top: parent.top
-            anchors.topMargin: body.border.width
-            anchors.left: parent.left
-            anchors.leftMargin: body.border.width
-            anchors.right: parent.right
-            anchors.rightMargin: body.border.width
-            fillMode: Image.PreserveAspectFit
+        anchors.fill: parent
+        anchors.margins: selectorBody.border.width
 
-            source: root.image !== "" ? (root.path + root.image)
-                                      : ""
-        }
-
-        // Texte visible au centre du bouton
-        Text{
-            id: text
-
-            anchors.top: image.bottom
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: body.border.width
-            anchors.verticalCenter: parent.verticalCenter
-
-            text: root.text
-            font.pixelSize: root.font_size
-            font.family: "Verdana"
-            color: root.textColor
-        }
-
-        // Zone de détection de souris pour détecter les clics
-        MouseArea{
-            id: area
-
-            anchors.fill: parent
-
-            hoverEnabled: true
-            enabled: true
-
-
-            // Répétition des signaux
-            onClicked: root.clicked(root.text)
-        }
-
-        // Rectangle pour le highlight
-        Rectangle {
-            id: highlight
-
-            anchors.fill: parent
-            anchors.margins: body.border.width
-
-            color: root.highlightColor
-            opacity: 0.3
-        }
+        color: root.highlightColor
+        opacity: selectorArea.containsPress ? 0.5 : 0.3
+        visible: selectorArea.containsMouse
     }
 }
