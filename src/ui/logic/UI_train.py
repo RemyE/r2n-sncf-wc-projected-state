@@ -25,3 +25,13 @@ class UItrain:
             Instance de l'application pour accéder aux autres pages
         """
         self.__app = ui_app
+
+    def change_active(self, train) -> None:
+        """Met à jour la rame active sur la page.
+
+        Parameters
+        ----------
+        train: `str`
+            Nom de la rame à afficher.
+        """
+        pass

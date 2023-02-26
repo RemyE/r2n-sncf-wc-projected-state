@@ -25,3 +25,13 @@ class UIoperation:
             Instance de l'application pour accéder aux autres pages
         """
         self.__app = ui_app
+
+    def change_active(self, operation) -> None:
+        """Met à jour la marche active sur la page.
+
+        Parameters
+        ----------
+        operation: `str`
+            Nom de la marche à afficher.
+        """
+        pass
