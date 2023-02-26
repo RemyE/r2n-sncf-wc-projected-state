@@ -9,7 +9,7 @@ Window {
     minimumWidth: 960
     minimumHeight: 540
     title: "SNCF-toilet-data-analyser"
-    color: root.backgroundColor
+    color: window.backgroundColor
 
     // Propriété sur les couleurs
     property string backgroundColor: "#000000"
