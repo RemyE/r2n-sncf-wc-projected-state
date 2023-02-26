@@ -10,15 +10,14 @@ import re
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtCore import QObject, QtMsgType, qInstallMessageHandler
-from PySide6.QtCore import QObject
 
 
 # Project libraries
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]
 sys.path.append(os.path.dirname(PROJECT_DIR))
-from src.ui.logic.UI_main import UImain
-from src.ui.logic.UI_train import UItrain
-from src.ui.logic.UI_operation import UIoperation
+from src.ui.logic.UI_main import UImain                     # NOQA
+from src.ui.logic.UI_train import UItrain                   # NOQA
+from src.ui.logic.UI_operation import UIoperation           # NOQA
 
 
 class UIapp:
@@ -33,7 +32,7 @@ class UIapp:
     operation_page: UIoperation = None
 
     # File path to the graphic file of the application
-    window_file_path: str = f"{PROJECT_DIR}src/ui/ui_app.qml"
+    window_file_path: str = f"{PROJECT_DIR}src/ui/UI_app.qml"
 
     # Liste des messages à ignorer de Qt (pour éviter un registre brouillon)
     qt_ignore = ("Found metadata in lib",
