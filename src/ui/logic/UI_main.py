@@ -21,8 +21,7 @@ class UImain:
     """Classe pour le fonctionnement logique de la page"""
     # fenêtre pour accéder aux autres pages
     __app: "UIapp" = None
-
-    component: QObject = None
+    __component: QObject = None
 
     def __init__(self, ui_app):
         """Initialise la page principale
@@ -36,19 +35,19 @@ class UImain:
         self.__app = ui_app
 
         # Sauvegarde la page pour y accéder plus rapidement
-        self.component = self.__app.win.findChild(QObject, "main")
+        self.__component = self.__app.win.findChild(QObject, "main")
 
         # Y indique les marches et les rames disponibles
         trains = ["Z56701", "Z56733", "Z56798"]        # FIXME : remplacer avec le getter
         operations = ["3113", "3167", "3215"]          # FIXME : remplacer avec le getter
-        self.component.setProperty("operationNames", list(operations))
-        self.component.setProperty("operationSources", list(o_r.equivalent(operation) for operation in operations))
-        self.component.setProperty("trainNames", list(trains))
-        self.component.setProperty("trainSources", list(t_r.equivalent(train) for train in trains))
+        self.__component.setProperty("operationNames", list(operations))
+        self.__component.setProperty("operationSources", list(o_r.equivalent(operation) for operation in operations))
+        self.__component.setProperty("trainNames", list(trains))
+        self.__component.setProperty("trainSources", list(t_r.equivalent(train) for train in trains))
 
         # Connecte le clic des icones aux différents onglets
-        self.component.operationClicked.connect(self.on_operation_clicked)
-        self.component.trainClicked.connect(self.on_train_clicked)
+        self.__component.operationClicked.connect(self.on_operation_clicked)
+        self.__component.trainClicked.connect(self.on_train_clicked)
 
     def on_operation_clicked(self, text) -> None:
         """Affiche les information sur la marche sélectionnée.
