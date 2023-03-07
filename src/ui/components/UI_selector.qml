@@ -25,10 +25,13 @@ Item {
     property int fontSize: 12
     property string name: ""
 
+    // Propriété sur l'état du sélecteur
+    property bool enabled: true
+
     // Propriétés sur les couleurs utilisées
     property string backgroundColor: "#000000"
-    property string textColor: "#C8C8C8"
-    property string borderColor: "#C8C8C8"
+    property string textEnabledColor: "#C8C8C8"
+    property string textDisabledColor: "#939393"
     property string highlightColor: "#000080"
 
     // Signaux à surchager en QML ou en Python
@@ -47,7 +50,7 @@ Item {
 
         color: root.backgroundColor
         border.width: 1
-        border.color: borderColor
+        border.color: root.enabled ? root.textEnabledColor : root.textDisabledColor
     }
 
 
@@ -79,7 +82,7 @@ Item {
         text: root.name
         font.pixelSize: root.fontSize
         font.family: "Verdana"
-        color: root.textColor
+        color: root.enabled ? root.textEnabledColor : root.textDisabledColor
     }
 
     // Zone de détection de souris pour détecter les clics
@@ -88,8 +91,8 @@ Item {
 
         anchors.fill: parent
 
-        hoverEnabled: true
-        enabled: true
+        hoverEnabled: root.enabled
+        enabled: root.enabled
 
 
         // Répétition des signaux
