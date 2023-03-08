@@ -13,6 +13,12 @@ Item {
     // Propriété sur la validité des valeurs
     readonly property bool valid: true       // TODO : définir, selon les données
 
+    // Propriété sur les missions
+    property var dataNames: []              // format ["nom1", "nom2", ...]
+    property var dataValues: []             // format [[[[year, month, day], value], ...], ...] (doit être ordonné par data
+    property string activeName: ""          // graphe actif parmi dataNames
+    property string activeMode: "day"       // valeurs possibles : "day", "month", "year"
+
     // Propriété sur la date du jour
     property int day: 0
     property int month: 0
