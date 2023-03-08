@@ -16,11 +16,12 @@ Item {
 
     // Propriétés liées à l'image et au texte que l'utilisateur peut rajouter sur le bouton
     property int borderWidth: 1             // Taille des bordures du bouton
+    property int radius: 0            // Rayon des bordures du bouton
     property string image: ""               // Image à afficher en tout temps sur le bouton si image_enabled et image_disabled sont vides (peut rester vide)
     property string text: ""                // Texte à afficher
     property int fontSize: 12               // Police du texte
 
-    // Propriétés liées à l'état du INI_button
+    // Propriétés liées à l'état
     property bool enabled: true               // Si le bouton peut être activée
 
     // Propriétés sur les couleurs utilisées
@@ -48,6 +49,7 @@ Item {
 
         color: root.backgroundColor
         border.width: root.borderWidth
+        radius: root.radius
         border.color: root.enabled ? root.textEnabledColor : root.textDisabledColor
     }
 
@@ -65,7 +67,7 @@ Item {
         fillMode: Image.PreserveAspectFit
 
         source: root.image !== "" ? (root.path + root.image)
-                                   : ""
+                                  : ""
     }
 
     // Texte visible au centre du bouton
@@ -104,6 +106,7 @@ Item {
 
         anchors.fill: parent
         anchors.margins: buttonBody.border.width
+        radius: root.radius
 
         color: root.highlightColor
         opacity: buttonArea.containsPress ? 0.5 : 0.3
