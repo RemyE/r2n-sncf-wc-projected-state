@@ -10,6 +10,9 @@ Item {
     // Propriétés sur la rame paramétrée
     property string trainName: ""
 
+    // Propriété sur la validité des valeurs
+    readonly property bool valid: root.trainName !== "" && root.cleanWaterData.length !== 0 && root.poopooWaterData.length !== 0 && root.flushData.length !== 0 && root.sinkData.length !== 0
+
     // Propriété sur la date du jour
     property int day: 0
     property int month: 0
@@ -21,11 +24,18 @@ Item {
         root.year = date.getFullYear()
     }
 
-    // Propriétés sur les données
+    // Propriété sur les valeurs
+    property var cleanWaterData: []         // format [["operation", [year, month, day], value], ...] -> Format SplineSeries
+    property var poopooWaterData: []        // format [["operation", [year, month, day], value], ...] -> Format SplineSeries
+    property var flushData: []              // format [["operation", [year, month, day], value], ...] -> Format barSeries
+    property var sinkData: []               // format [["operation", [year, month, day], value], ...] -> Format BarSeries
 
-    // Propriété sur la validité des valeurs
-    readonly property bool valid: true       // TODO : définir, selon les données
-    
+
+    // Fonction de mise à jour des graphiques, à appeler dès que les données changent où qu'une marche est ajoutée/supprimée
+    function update() {
+        // TODO : définir
+    }
+
 
 
     // Bouton de retour
@@ -37,8 +47,8 @@ Item {
         anchors.topMargin: 8
         anchors.left: parent.left
         anchors.leftMargin : 8
-        width: 120
-        height: 40
+        width: 100
+        height: 30
         
         text: "retour"
     }
@@ -68,5 +78,42 @@ Item {
         height: returnButton.height
 
         text: "sauvegarder"
+    }
+
+
+    // Rectangle pour la structure de visualisation, de sélection et d'ajout des missions
+        Rectangle {
+        id: selectorBody
+
+        anchors.top:  returnButton.bottom
+        anchors.topMargin: returnButton.anchors.topMargin
+        anchors.left: returnButton.left
+        anchors.right: saveButton.right
+        height: returnButton.height * 3     // TODO : préciser
+        border.width: 3 * returnButton.borderWidth
+
+        color: returnButton.backgroundColor
+        border.color: returnButton.textEnabledColor
+
+        // TODO : ajouter le RowLayout de sélection
+    }
+
+
+        // Rectangle pour la structure de visualisation, de sélection et d'ajout des missions
+        Rectangle {
+        id: trainBody
+
+        anchors.top:  selectorBody.bottom
+        anchors.topMargin: selectorBody.anchors.topMargin
+        anchors.left: returnButton.left
+        anchors.right: saveButton.right
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: returnButton.anchors.topMargin
+        border.width: 3 * returnButton.borderWidth
+
+        color: returnButton.backgroundColor
+        border.color: returnButton.textEnabledColor
+
+        // TODO : ajouter le UI_chartview
     }
 }
