@@ -11,13 +11,7 @@ Item {
     property string operationName: ""
 
     // Propriété sur la validité des valeurs
-    readonly property bool valid: true       // TODO : définir, selon les données
-
-    // Propriété sur les missions
-    property var dataNames: []              // format ["nom1", "nom2", ...]
-    property var dataValues: []             // format [[[[year, month, day], value], ...], ...] (doit être ordonné par data
-    property string activeName: ""          // graphe actif parmi dataNames
-    property string activeMode: "day"       // valeurs possibles : "day", "month", "year"
+    readonly property bool valid: root.operationName !== "" && root.cleanWaterData.length !== 0 && root.poopooWaterData.length !== 0 && root.flushData.length !== 0 && root.sinkData.length !== 0
 
     // Propriété sur la date du jour
     property int day: 0
@@ -28,6 +22,24 @@ Item {
         root.day = date.getDate()
         root.month = date.getMonth() + 1
         root.year = date.getFullYear()
+    }
+
+    // Propriété sur les missions
+    property var cleanWaterData: []         // format [[[year, month, day], [value, average]], ...] -> Format barSeries + SplineSeries
+    property var poopooWaterData: []        // format [[[year, month, day], [value, average]], ...] -> Format barSeries + SplineSeries
+    property var flushData: []              // format [[[year, month, day], value], ...]            -> Format barSeries
+    property var sinkData: []               // format [[[year, month, day], value], ...]            -> Format BarSeries
+
+    // Propriété sur la sélection du graphe effectuée
+    property string visibleData: "water level"      // Valeurs possibles : "water level", "uses"
+    onVisibleDataChanged: { root.update() }
+    property string visiblePeriod: "week"           // Valeurs possibles : "week", "month", "year"
+    onVisiblePeriodChanged: { root.update() }
+
+
+    // Fonction de mise à jour des graphiques, à appeler à chaque fois que la marche visible ou la sélection change
+    function update() {
+        // TODO : définir
     }
 
 
@@ -41,8 +53,9 @@ Item {
         anchors.topMargin: 8
         anchors.left: parent.left
         anchors.leftMargin : 8
-        width: 120
-        height: 40
+        width: 100
+        height: 30
+        borderWidth: 1
 
         text: "retour"
     }
@@ -70,7 +83,94 @@ Item {
         anchors.rightMargin: returnButton.anchors.leftMargin
         width: returnButton.width
         height: returnButton.height
+        borderWidth: returnButton.borderWidth
 
         text: "sauvegarder"
+    }
+
+
+    // Rectangle de structure pour le graphe
+    Rectangle {
+        id: operationBody
+
+        anchors.top:  returnButton.bottom
+        anchors.topMargin: returnButton.anchors.topMargin
+        anchors.left: returnButton.left
+        anchors.right: saveButton.right
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: returnButton.anchors.topMargin
+        border.width: 3 * returnButton.borderWidth
+
+        color: returnButton.backgroundColor
+        border.color: returnButton.textEnabledColor
+
+
+
+        // TODO : ajouter le UI_chartview
+
+        // Row Layout pour sélectionner le temps à afficher
+        RowLayout {
+            id: periodLayout
+
+            anchors.top: parent.top
+            anchors.topMargin: 8 + parent.border.width
+            anchors.left: parent.left
+            anchors.leftMargin: anchors.topMargin
+            height: returnButton.height
+            width: returnButton.width * periodRepeater.count + spacing * (periodRepeater.count - 1)
+            spacing: anchors.topMargin - parent.border.width
+
+            // Liste des UI_button pour sélectionner entre le jour, le mois et l'année
+            Repeater {
+                id: periodRepeater
+
+                model: [["semaine", "week"],
+                        ["mois", "month"],
+                        ["année", "year"]]
+
+                UI_button {
+                    width: returnButton.width
+                    height: returnButton.height
+                    radius: width / 2
+                    borderWidth: returnButton.borderWidth * (returnButton.borderWidth + (operationBody.border.width - returnButton.borderWidth) * (root.visiblePeriod === modelData[1]))
+
+                    text: modelData[0]
+
+                    onClicked: { root.visiblePeriod = modelData[1] }
+                }
+            }
+        }
+
+        // Row Layout pour sélectionner le type de données visible
+        RowLayout {
+            id: dataLayout
+
+            anchors.top: parent.top
+            anchors.topMargin: 8 + parent.border.width
+            anchors.right: parent.right
+            anchors.rightMargin: anchors.topMargin
+            height: returnButton.height
+            width: returnButton.width * dataRepeater.count + spacing * (dataRepeater.count - 1)
+            spacing: anchors.topMargin - parent.border.width
+
+            // Liste des UI_button pour sélectionner entre le jour, le mois et l'année
+            Repeater {
+                id: dataRepeater
+
+                model: [["Niveau d'eau", "water level"],
+                        ["utilisations", "uses"]]
+
+                UI_button {
+                    width: returnButton.width
+                    height: returnButton.height
+                    radius: width / 2
+                    borderWidth: returnButton.borderWidth * (1 + (root.visibleData === modelData[1]))
+
+                    text: modelData[0]
+
+                    onClicked: { root.visibleData = modelData[1] }
+                }
+            }
+        }
     }
 }
