@@ -44,7 +44,14 @@ class UIoperation:
         operation: `str`
             Nom de la marche à afficher.
         """
-        pass
+        # Récupère les différentes données, et les définis sur la page TODO : tout connecter
+        self.__component.setProperty("cleanWaterData", [])
+        self.__component.setProperty("poopooWaterData", [])
+        self.__component.setProperty("flushData", [])
+        self.__component.setProperty("sinkData", [])
+
+        # Met à jour les graphiques à l'aide de la fonction update
+        self.__component.update()
 
     def save(self) -> None:
         """Formate les données actuellement affichées et les sauvegardes."""
