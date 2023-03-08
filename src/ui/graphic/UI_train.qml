@@ -37,10 +37,10 @@ Item {
         anchors.topMargin: 8
         anchors.left: parent.left
         anchors.leftMargin : 8
-        width: 60
-        height: 30
+        width: 120
+        height: 40
         
-        text: "return" 
+        text: "retour"
     }
     
     // Titre
@@ -66,5 +66,7 @@ Item {
         anchors.rightMargin: returnButton.anchors.leftMargin
         width: returnButton.width
         height: returnButton.height
+
+        text: "sauvegarder"
     }
 }

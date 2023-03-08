@@ -87,7 +87,7 @@ Item {
 
         anchors.fill: parent
 
-        hoverEnabled: false
+        hoverEnabled: root.enabled
         enabled: root.enabled
 
 
@@ -96,5 +96,17 @@ Item {
         onDoubleClicked: root.doubleClicked()
         onPressed: root.pressed()
         onReleased: root.released()
+    }
+
+    // Rectangle pour le highlight
+    Rectangle {
+        id: buttonHighlight
+
+        anchors.fill: parent
+        anchors.margins: buttonBody.border.width
+
+        color: root.highlightColor
+        opacity: buttonArea.containsPress ? 0.5 : 0.3
+        visible: buttonArea.containsMouse
     }
 }
