@@ -88,6 +88,10 @@ class Paths:
         # ./root/Data/Parquet/Edited
         self.__paths["Edited_3"] = self.__paths["Parquet_2"].joinpath("Edited")
 
+        # Dossier "Database_extracted_table"
+        # ./root/Data/Parquet/Database_extracted_table
+        self.__paths["Database_extracted_table_3"] = self.__paths["Parquet_2"].joinpath("Database_extracted_table")
+
         # Dossier ".Temp_parquet_merge"
         # ./root/Data/Parquet/.Temp_parquet_merge
         self.__paths["Temp_parquet_merge_3"] = self.__paths["Parquet_2"].joinpath(".Temp_parquet_merge")
