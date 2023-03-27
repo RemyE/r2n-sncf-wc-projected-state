@@ -31,7 +31,7 @@ Item {
     property var sinkData: []               // format [[[year, month, day], value], ...]            -> Format BarSeries
 
     // Propriété sur la sélection du graphe effectuée
-    property string visibleData: "water level"      // Valeurs possibles : "water level", "uses"
+    property string visibleData: "levels"      // Valeurs possibles : "levels", "uses"
     onVisibleDataChanged: { root.update() }
     property string visiblePeriod: "week"           // Valeurs possibles : "week", "month", "year"
     onVisiblePeriodChanged: { root.update() }
@@ -106,7 +106,37 @@ Item {
 
 
 
-        // TODO : ajouter le UI_chartview
+        UI_chartview {
+            id: operationChart
+
+            anchors.fill: parent
+
+            xTitle: "Date de la marche"
+            xDecimals: 0
+            xTicks: 4
+            xMinorTicks: 0
+
+            ySplinesTitle: root.visibleData === "levels" ? "Niveaux d'eau (en l, moyenné sur 7 jours)"  // Niveaux d'eau moyennés sur 7 jours en mode "levels"
+                                                         : root.visibleData === "uses" ? ""             // Aucune spline series en mode "uses"
+                                                                                       : ""             // Nouvelle donnée non définie
+            ySplinesDecimals: root.visibleData === "levels" ? 2                                         // contenance (pas entier)
+                                                            : root.visibleData === "uses" ? 0           // Aucune valeur
+                                                                                          : 0           // Nouvelle donnée non définie
+            ySplinesTicks: 4
+            ySplinesMinorTicks: 2
+
+            yBarsTitle: root.visibleData === "levels" ? "Niveaux d'eau (en l)"                          // Niveaux d'eau moyennés sur 7 jours en mode "levels"
+                                                       : root.visibleData === "uses" ? ""               // Aucune spline series en mode "uses"
+                                                                                     : ""               // Nouvelle donnée non définie
+            yBarsDecimals: root.visibleData === "levels" ? 2                                            // contenance (pas entier)
+                                                          : root.visibleData === "uses" ? 0             // Compte (entier)
+                                                                                        : 0             // Nouvelle donnée non définie
+            yBarsTicks: 4
+            yBarsMinorTicks: 2
+
+            splinesData: [[[0.0, 1], [0.5, 0.2]], [[0.1, 0.3], [0.2, 0.7], [0.6, 0.4]]]
+            splinesLegend: [["#40E0D0", "Eau claire"], ["#B8860B", "Eau sale"]]
+        }
 
         // Row Layout pour sélectionner le temps à afficher
         RowLayout {
@@ -157,7 +187,7 @@ Item {
             Repeater {
                 id: dataRepeater
 
-                model: [["Niveau d'eau", "water level"],
+                model: [["Niveau d'eau", "levels"],
                         ["utilisations", "uses"]]
 
                 UI_button {
