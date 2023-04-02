@@ -48,7 +48,7 @@ Item {
 
     // Fonction pour mettre à jour une spline (ou toutes si index invalide)
     // La mise à jour est manuelle car catastrophiquement lente
-    function update(spline) {      // Index de 0 à Nsplines - 1
+    function updateValues(spline) {      // Index de 0 à Nsplines - 1
         // Définit les limites des splines à mettre à jour (celle indiquée ou toutes si l'index est invalide)
         // splinesChart.model = root.datas.length ; cependant les composants des Repeater ne sont chargés qu'après chargement complet du composant
         var from = spline >= 0 && spline < charts.count ? spline : 0
@@ -67,8 +67,8 @@ Item {
         }
     }
 
-    // Détecte lorsque la liste des splines est mise à jour
-    onDatasChanged: {
+    // Fonction pour mettre à jour les valeurs limites des axes du graphique
+    function updateLimits() {
         // Redéfinit les valeurs minimales et maximales de l'axe x
         // Différencie le cas d'une date ou d'un nombre pour la valeur x
         if (root.dateFormat) {
@@ -81,10 +81,10 @@ Item {
             }
             var earliest = dates.reduce(function (previous, current) {
                 return Date.parse(previous) > Date.parse(current) ? current : previous;
-            }
+            }, [(new Date()).getUTCFullYear(), (new Date()).getUTCMonth() + 1, (new Date()).getUTCDate()]);
             var newest = dates.reduce(function (previous, current) {
                 return Date.parse(previous) < Date.parse(current) ? current : previous;
-            }
+            }, [(new Date()).getUTCFullYear(), (new Date()).getUTCMonth() + 1, (new Date()).getUTCDate()]);
             xValueAxis.min = 0
             xValueAxis.max = 1
             xDateAxis.min = Date(earliest)
@@ -100,10 +100,10 @@ Item {
             }
             var smallest = values.reduce(function (previous, current) {
                 return previous > current ? current : previous;
-            }
+            }, 0);
             var biggest = values.reduce(function (previous, current) {
                 return previous < current ? current : previous;
-            }
+            }, 0);
             xValueAxis.min = smallest
             xValueAxis.max = biggest
             xDateAxis.min = Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
@@ -120,12 +120,18 @@ Item {
         }
         var biggest = values.reduce(function (previous, current) {
             return previous < current ? current : previous;
-        }
+        }, 0);
         yValueAxis.max = biggest
+    }
+
+    // Détecte lorsque la liste des splines est mise à jour
+    onDatasChanged: {
+        // Redéfinit les valeurs limites des graphiques
+        root.updateLimits()
 
         // Passe sur chacune des bars et la met à jour
         for (var chartIndex=0 ; chartIndex < charts.count ; chartIndex++) {
-            root.update(chartIndex)
+            root.updateValues(chartIndex)
         }
     }
 
@@ -137,7 +143,7 @@ Item {
 
         // Les valeurs minimales et maximales sont redéfinies lors de la mise à jour des données
         min: 0
-        max: 1
+        max: 0
 
         color: root.textEnabledColor
         gridLineColor: root.textDisabledColor
@@ -171,7 +177,7 @@ Item {
         id: xDateAxis
 
         // Les valeurs minimales et maximales sont redéfinies lors de la mise à jour des données
-        min: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
+        min: new Date()
         max: new Date()
 
         color: root.textEnabledColor
@@ -250,7 +256,7 @@ Item {
 
 
             // Fonctions permettant de rajouter et d'enlever des points à la SplineSeries
-            // Il est impossible pour la fonction updateSpline de récupérer la spline
+            // Il est impossible pour la fonction updateValues de récupérer la spline
             function clear() { spline.removePoints(0, spline.count) }
             function addPoint(x, y) { spline.append(x, y) }
 
@@ -279,7 +285,7 @@ Item {
                 id: spline
 
                 // La répétition de point et de SplineSeries est impossible (car ce sont des delegates et non des objets)
-                // Ceci devront être rajoutés avec l'appel de la fonction updateSpline()
+                // Ceci devront être rajoutés avec l'appel de la fonction updatevalues()
 
                 // Couleur de la courbe (dépend des couleurs envoyées)
                 color: root.colors[splineIndex]
@@ -296,5 +302,5 @@ Item {
     }
 
     // Fais une première update de toutes les splines pour les montrer une fois le composant chargé
-    Component.onCompleted: root.update(-1)
+    Component.onCompleted: {root.updateLimits(); root.updateValues(-1) }
 }
