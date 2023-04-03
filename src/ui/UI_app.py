@@ -18,6 +18,7 @@ sys.path.append(os.path.dirname(PROJECT_DIR))
 from src.ui.logic.UI_main import UImain                     # NOQA
 from src.ui.logic.UI_train import UItrain                   # NOQA
 from src.ui.logic.UI_operation import UIoperation           # NOQA
+from src.database.database import Database                  # NOQA
 
 
 class UIapp:
@@ -30,6 +31,9 @@ class UIapp:
     main_page: UImain = None
     train_page: UItrain = None
     operation_page: UIoperation = None
+
+    # Basse de données train
+    database: Database = None
 
     # File path to the graphic file of the application
     window_file_path: str = f"{PROJECT_DIR}src/ui/UI_app.qml"
@@ -61,6 +65,9 @@ class UIapp:
         # Jette une exception si la QApplication n'a pas été initialisée
         if QApplication.instance() is None:
             raise RuntimeError(f"QApplication not loaded")
+
+        # Initialise la BDD
+        self.database = Database()
 
         # Connecte le registre des fichiers graphiques avec le registre Python
         os.environ["QT_DEBUG_PLUGINS"] = "1"
