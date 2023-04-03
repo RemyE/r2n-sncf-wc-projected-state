@@ -7,28 +7,14 @@ import "../components"
 Item {
     id: root
 
-    // Propriétés sur la rame paramétrée
-    property string trainName: ""
-
     // Propriété sur la validité des valeurs
     readonly property bool valid: root.trainName !== "" && root.cleanWaterData.length !== 0 && root.poopooWaterData.length !== 0 && root.flushData.length !== 0 && root.sinkData.length !== 0
 
-    // Propriété sur la date du jour
-    property int day: 0
-    property int month: 0
-    property int year: 0
-    Component.onCompleted: {
-        var date = new Date()
-        root.day = date.getDate()
-        root.month = date.getMonth() + 1
-        root.year = date.getFullYear()
-    }
-
     // Propriété sur les valeurs
-    property var cleanWaterData: []         // format [["operation", [year, month, day], value], ...] -> Format SplineSeries
-    property var poopooWaterData: []        // format [["operation", [year, month, day], value], ...] -> Format SplineSeries
-    property var flushData: []              // format [["operation", [year, month, day], value], ...] -> Format barSeries
-    property var sinkData: []               // format [["operation", [year, month, day], value], ...] -> Format BarSeries
+    property double cleanWaterBaseLevel: 0.0    // Remplissage par défaut du réservoir d'eau propre
+    property double poopooWaterBaseLevel: 0.0   // Remplissage par défaut du réservoir d'eau sale
+    property var cleanWaterData: []             // format [[min, avg, max], ...] -> Format SplineSeries
+    property var poopooWaterData: []            // format [[min, avg, max], ...] -> Format SplineSeries
 
 
     // Fonction de mise à jour des graphiques, à appeler dès que les données changent où qu'une marche est ajoutée/supprimée
@@ -60,7 +46,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: returnButton.verticalCenter
         
-        text: root.trainName
+        text: "Outil de prédiction"
         color: root.valid ? returnButton.textEnabledColor : returnButton.textDisabledColor
         
     }

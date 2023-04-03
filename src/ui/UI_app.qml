@@ -18,18 +18,18 @@ Window {
     // Fonctions pour changer la page active
     function go_back() {
         operation.visible = false
-        train.visible = false
+        prediction.visible = false
         main.visible = true
     }
 
-    function show_train() {
+    function show_prediction() {
         operation.visible = false
         main.visible = false
-        train.visible = true
+        prediction.visible = true
     }
 
     function show_operation() {
-        train.visible = false
+        prediction.visible = false
         main.visible = false
         operation.visible = true
     }
@@ -55,9 +55,9 @@ Window {
         visible: false
     }
 
-    UI_train {
-        id: train
-        objectName: "train"
+    UI_prediction {
+        id: prediction
+        objectName: "prediction"
 
         anchors.fill: parent
 

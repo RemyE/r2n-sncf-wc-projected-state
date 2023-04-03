@@ -11,10 +11,6 @@ Item {
     property var operationNames: []
     property var operationSources: []
 
-    // Propriété sur la liste des rames
-    property var trainNames: []
-    property var trainSources: []
-
     // Propriétés sur les couleurs utilisées
     property string backgroundColor: "#000000"
     property string textColor: "#C8C8C8"
@@ -23,7 +19,6 @@ Item {
 
     // Signaux à surchager en QML ou en Python
     signal operationClicked(string text)
-    signal trainClicked(string text)
 
 
 
@@ -32,9 +27,9 @@ Item {
         id: operationBody
 
         anchors.left: parent.left
-        anchors.right: parent.horizontalCenter
-        anchors.bottom: parent.bottom
+        anchors.right: parent.right
         anchors.top: parent.top
+        anchors.bottom: predictionButton.bottom
         anchors.margins: 12
 
         color: root.backgroundColor
@@ -105,80 +100,20 @@ Item {
     }
 
 
-    // Listview pour les rames
-    Rectangle {
-        id: trainBody
+    // Bouton pour l'outil de prédiction
+    UI_button {
+        id: predictionButton
+        objectName: "predictionButton"
 
-        anchors.left: parent.horizontalCenter
-        anchors.right: parent.right
+        anchors.left: operationBody.left
+        anchors.right: operationBody.right
         anchors.bottom: parent.bottom
-        anchors.top: parent.top
-        anchors.margins: 12
+        anchors.bottomMargin: operationBody.anchors.margins
+        anchors.topMargin: operationBody.anchors.margins
+        height: 72
+        borderWidth:  2
 
-        color: root.backgroundColor
-        border.width: 2
-        border.color: root.borderColor
-
-
-
-        // Rectangle pour le titre
-        Rectangle {
-            id: trainTitle
-
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            height: 36
-
-            color: root.backgroundColor
-            border.width: 2
-            border.color: root.borderColor
-
-
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                text: "Rames"
-                font.pixelSize: 24
-                font.family: "Verdana"
-                color: root.textColor
-            }
-        }
-
-        // Liste des marches à visualiser
-        ListView {
-            id: trainView
-
-            anchors.left: parent.left
-            anchors.leftMargin: trainBody.border.width
-            anchors.right: parent.right
-            anchors.rightMargin: trainBody.border.width
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: trainBody.border.width
-            anchors.top: trainTitle.bottom
-
-            flickableDirection: Flickable.VerticalFlick
-            boundsBehavior: Flickable.StopAtBounds
-            clip: true
-            spacing: 0
-
-            model: Math.min(root.trainNames.length, root.trainSources.length)
-
-            delegate: UI_selector {
-                anchors.left: parent ? parent.left : undefined
-                anchors.right: parent ? parent.right : undefined
-
-                path: "../assets/trains/"
-                name: root.trainNames[index]
-                source: root.trainSources[index]
-
-
-                // Répétition des signaux
-                onClicked: function(text) {root.trainClicked(text)}
-            }
-
-            ScrollBar.vertical: ScrollBar {}
-        }
+        text: "Outil de prédiction"
+        fontSize: 24
     }
 }

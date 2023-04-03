@@ -38,16 +38,13 @@ class UImain:
         self.__component = self.__app.win.findChild(QObject, "main")
 
         # Y indique les marches et les rames disponibles
-        trains = ["Z56701", "Z56733", "Z56798"]        # FIXME : remplacer avec le getter
-        operations = ["3113", "3167", "3215"]          # FIXME : remplacer avec le getter
-        self.__component.setProperty("operationNames", list(operations))
-        self.__component.setProperty("operationSources", list(o_r.equivalent(operation) for operation in operations))
-        self.__component.setProperty("trainNames", list(trains))
-        self.__component.setProperty("trainSources", list(t_r.equivalent(train) for train in trains))
+        self.__component.setProperty("operationNames", list(self.__app.database.operations))
+        self.__component.setProperty("operationSources", list(o_r.equivalent(operation)
+                                                              for operation in self.__app.database.operations))
 
         # Connecte le clic des icones aux différents onglets
         self.__component.operationClicked.connect(self.on_operation_clicked)
-        self.__component.trainClicked.connect(self.on_train_clicked)
+        self.__component.findChild(QObject, "predictionButton").clicked.connect(self.on_prediction_clicked)
 
     def on_operation_clicked(self, text) -> None:
         """Affiche les information sur la marche sélectionnée.
@@ -62,15 +59,8 @@ class UImain:
         self.__app.operation_page.change_active(text)
         self.__app.win.show_operation()
 
-    def on_train_clicked(self, text) -> None:
-        """Affiche les information sur la rame sélectionnée.
-           Signal appelé lorsque qu'une des rames sur le menu principal est appuyé.
-
-        Parameters
-        ----------
-        text: `str`
-            Nom de la rame sélectionnée.
-        """
+    def on_prediction_clicked(self) -> None:
+        """Ouvre la page de prédiction de consommations. Signal appelé lorsque le bouton de prédiction est appuyé."""
         # Met à jour la rame active visible (en appelant la fonction de la page) et montre la page
-        self.__app.train_page.change_active(text)
-        self.__app.win.show_train()
+        self.__app.prediction_page.reset()
+        self.__app.win.show_prediction()

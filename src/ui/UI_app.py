@@ -16,7 +16,7 @@ from PySide6.QtCore import QObject, QtMsgType, qInstallMessageHandler
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]
 sys.path.append(os.path.dirname(PROJECT_DIR))
 from src.ui.logic.UI_main import UImain                     # NOQA
-from src.ui.logic.UI_train import UItrain                   # NOQA
+from src.ui.logic.UI_prediction import UIprediction         # NOQA
 from src.ui.logic.UI_operation import UIoperation           # NOQA
 from src.database.database import Database                  # NOQA
 
@@ -29,8 +29,8 @@ class UIapp:
 
     # Pages nécessaires au fonctionnement de l'application
     main_page: UImain = None
-    train_page: UItrain = None
     operation_page: UIoperation = None
+    prediction_page: UIprediction = None
 
     # Basse de données train
     database: Database = None
@@ -87,8 +87,8 @@ class UIapp:
 
         # Appelle l'initialisation de chacune des pages pour rendre l'application fonctionnelle
         self.main_page = UImain(self)
-        self.train_page = UItrain(self)
         self.operation_page = UIoperation(self)
+        self.prediction_page = UIprediction(self)
 
         # Charge la page principale
         self.win.go_back()

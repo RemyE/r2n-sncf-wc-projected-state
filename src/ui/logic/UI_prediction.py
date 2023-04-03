@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from src.ui.UI_app import UIapp
 
 
-class UItrain:
+class UIprediction:
     """Classe pour le fonctionnement logique de la page"""
     # fenêtre pour accéder aux autres pages
     __app: "UIapp" = None
@@ -30,21 +30,15 @@ class UItrain:
             Instance de l'application pour accéder aux autres pages
         """
         self.__app = ui_app
-        self.__component = self.__app.win.findChild(QObject, "train")
+        self.__component = self.__app.win.findChild(QObject, "operation")
 
         # Connecte les différents signaux à leurs fonctions
         self.__component.findChild(QObject, "returnButton").clicked.connect(self.__app.win.go_back)
         self.__component.findChild(QObject, "saveButton").clicked.connect(self.save)
 
-    def change_active(self, train) -> None:
-        """Met à jour la rame active sur la page.
-
-        Parameters
-        ----------
-        train: `str`
-            Nom de la rame à afficher.
-        """
-        pass
+    def reset(self) -> None:
+        """Réinitialise la page de prédiction."""
+        self
 
     def save(self) -> None:
         """Formate les données actuellement affichées et les sauvegardes."""
