@@ -59,10 +59,12 @@ Item {
             // Réinitialise la spline
             charts.itemAt(chartIndex).clear()
 
-            // Rajoute tous les nouveaux points
-            for (var pointIndex = 0 ; pointIndex < root.datas[chartIndex].length ; pointIndex++) {
-                charts.itemAt(chartIndex).addPoint(root.datas[chartIndex][pointIndex][0],
-                                                   root.datas[chartIndex][pointIndex][1])
+            // Rajoute tous les nouveaux points, si ceux-ci existent
+            if (root.datas.length > chartIndex) {
+                for (var pointIndex = 0 ; pointIndex < root.datas[chartIndex].length ; pointIndex++) {
+                    charts.itemAt(chartIndex).addPoint(root.datas[chartIndex][pointIndex][0],
+                                                       root.datas[chartIndex][pointIndex][1])
+                }
             }
         }
     }
