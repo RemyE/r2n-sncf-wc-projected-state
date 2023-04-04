@@ -266,5 +266,33 @@ Item {
         }
     }
 
+    Repeater {
+        id: legend
 
+        model: Math.min(root.names.length, root.colors.length)
+
+
+        Item {
+            Rectangle {
+                x: root.x + 300 * (index % 3) + 40
+                y: root.y + root.height + root.fontSize * 2 * parseInt(index / 3) - 40 - 15
+                width: root.fontSize
+                height: root.fontSize
+
+                color: root.colors[index]
+                border.width: 1
+                border.color: root.textEnabledColor
+            }
+
+            Text {
+                x: root.x + 300 * (index % 3) + 2 * root.fontSize + 40
+                y: root.y + root.height + root.fontSize * 2 * parseInt(index / 3) - 40 - 15
+                width: root.fontSize
+                height: root.fontSize
+
+                text: root.names[index]
+                color: index < root.datas.length ? root.textEnabledColor : root.textDisabledColor
+            }
+        }
+    }
 }
