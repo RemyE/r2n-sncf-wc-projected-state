@@ -114,7 +114,7 @@ Item {
     Timer {
         id: delayTimer
 
-        interval: 50; repeat: false
+        interval: 5; repeat: false
         onTriggered: {
             // Redéfinit les valeurs limites des graphiques
             root.updateLimits()
