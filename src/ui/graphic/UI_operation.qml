@@ -189,37 +189,5 @@ Item {
                 }
             }
         }
-
-        // Row Layout pour sélectionner le type de données visible
-        RowLayout {
-            id: dataLayout
-
-            anchors.top: parent.top
-            anchors.topMargin: 8 + parent.border.width
-            anchors.right: parent.right
-            anchors.rightMargin: anchors.topMargin
-            height: returnButton.height
-            width: returnButton.width * dataRepeater.count + spacing * (dataRepeater.count - 1)
-            spacing: anchors.topMargin - parent.border.width
-
-            // Liste des UI_button pour sélectionner entre le jour, le mois et l'année
-            Repeater {
-                id: dataRepeater
-
-                model: [["Niveau d'eau", "levels"],
-                        ["utilisations", "uses"]]
-
-                UI_button {
-                    width: returnButton.width
-                    height: returnButton.height
-                    radius: width / 2
-                    borderWidth: returnButton.borderWidth * (1 + (root.visibleData === modelData[1]))
-
-                    text: modelData[0]
-
-                    onClicked: { root.visibleData = modelData[1] }
-                }
-            }
-        }
     }
 }
