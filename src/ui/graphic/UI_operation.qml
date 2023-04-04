@@ -11,30 +11,21 @@ Item {
     property string operationName: ""
 
     // Propriété sur la validité des valeurs
-    readonly property bool valid: root.operationName !== "" && root.cleanWaterData.length !== 0 && root.poopooWaterData.length !== 0 && root.flushData.length !== 0 && root.sinkData.length !== 0
+    readonly property bool valid: root.operationName !== "" && root.cleanWaterData.length !== 0 && root.poopooWaterData.length !== 0
 
     // Propriété sur la date du jour
-    property int day: 0
-    property int month: 0
-    property int year: 0
-    Component.onCompleted: {
-        var date = new Date()
-        root.day = date.getDate()
-        root.month = date.getMonth() + 1
-        root.year = date.getFullYear()
-    }
+    property int day: (new Date()).getUTCDate()
+    property int month: (new Date()).getUTCMonth() + 1
+    property int year: (new Date()).getUTCFullYear()
 
     // Propriété sur les missions
-    property var cleanWaterData: []         // format [[[year, month, day], [value, average]], ...] -> Format barSeries + SplineSeries
-    property var poopooWaterData: []        // format [[[year, month, day], [value, average]], ...] -> Format barSeries + SplineSeries
-    property var flushData: []              // format [[[year, month, day], value], ...]            -> Format barSeries
-    property var sinkData: []               // format [[[year, month, day], value], ...]            -> Format BarSeries
+    property var cleanWaterData: []         // format [[[year, month, day], [min, avg, max]], ...] -> SplineSeries
+    onCleanWaterDataChanged: root.update()
+    property var poopooWaterData: []        // format [[[year, month, day], [min, avg, max]], ...] -> SplineSeries
+    onPoopooWaterDataChanged: root.update()
 
-    // Propriété sur la sélection du graphe effectuée
-    property string visibleData: "levels"      // Valeurs possibles : "levels", "uses"
-    onVisibleDataChanged: { root.update() }
     property string visiblePeriod: "week"           // Valeurs possibles : "week", "month", "year"
-    onVisiblePeriodChanged: { root.update() }
+    onVisiblePeriodChanged: root.update()
 
 
     // Fonction de mise à jour des graphiques, à appeler à chaque fois que la marche visible ou la sélection change
