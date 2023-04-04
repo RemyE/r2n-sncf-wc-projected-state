@@ -44,11 +44,10 @@ class UIoperation:
         operation: `str`
             Nom de la marche à afficher.
         """
-        # Récupère les différentes données, et les définis sur la page TODO : tout connecter
-        self.__component.setProperty("cleanWaterData", [])
-        self.__component.setProperty("poopooWaterData", [])
-        self.__component.setProperty("flushData", [])
-        self.__component.setProperty("sinkData", [])
+        # Récupère et mets à jour les données
+        self.__component.setProperty("operationName", operation)
+        self.__component.setProperty("cleanWaterData", self.__app.database.format_clean_water(operation, last=False))
+        self.__component.setProperty("poopooWaterData", self.__app.database.format_poopoo_water(operation, last=False))
 
         # Met à jour les graphiques à l'aide de la fonction update
         self.__component.update()
