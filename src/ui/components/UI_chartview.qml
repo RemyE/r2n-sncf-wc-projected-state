@@ -72,44 +72,24 @@ Item {
     // Fonction pour mettre à jour les valeurs limites des axes du graphique
     function updateLimits() {
         // Redéfinit les valeurs minimales et maximales de l'axe x
-        // Différencie le cas d'une date ou d'un nombre pour la valeur x
-        if (root.dateFormat) {
-            // Trouve la date minimale et maximale, en récupérant toutes les dates et en les comparants
-            var dates = []
-            for (var splineIndex=0 ; splineIndex < root.datas.length ; splineIndex++) {
-                for (var pointIndex=0 ; pointIndex < root.datas[splineIndex].length ; pointIndex++) {
-                    dates.append(root.datas[splineIndex][pointIndex][0])
-                }
+        // Trouve la valeur minimale et maximale, en récupérant toutes les valeurs et en les comparants
+        var values = []
+        for (var splineIndex=0 ; splineIndex < root.datas.length ; splineIndex++) {
+            for (var pointIndex=0 ; pointIndex < root.datas[splineIndex].length ; pointIndex++) {
+                values.push(root.datas[splineIndex][pointIndex][0])
             }
-            var earliest = dates.reduce(function (previous, current) {
-                return Date.parse(previous) > Date.parse(current) ? current : previous;
-            }, [(new Date()).getUTCFullYear(), (new Date()).getUTCMonth() + 1, (new Date()).getUTCDate()]);
-            var newest = dates.reduce(function (previous, current) {
-                return Date.parse(previous) < Date.parse(current) ? current : previous;
-            }, [(new Date()).getUTCFullYear(), (new Date()).getUTCMonth() + 1, (new Date()).getUTCDate()]);
-            xValueAxis.min = 0
-            xValueAxis.max = 1
-            xDateAxis.min = Date(earliest)
-            xDateAxis.max = Date(newest)
+        }
+        if (values.length > 0) {
+            root.xMinimum = values.reduce(function (previous, current) {
+                return previous > current ? current : previous;
+            });
+            root.xMaximum = values.reduce(function (previous, current) {
+                return previous < current ? current : previous;
+            });
         }
         else {
-            // Trouve la valeur minimale et maximale, en récupérant toutes les valeurs et en les comparants
-            var values = []
-            for (var splineIndex=0 ; splineIndex < root.datas.length ; splineIndex++) {
-                for (var pointIndex=0 ; pointIndex < root.datas[splineIndex].length ; pointIndex++) {
-                    values.append(root.datas[splineIndex][pointIndex][0])
-                }
-            }
-            var smallest = values.reduce(function (previous, current) {
-                return previous > current ? current : previous;
-            }, 0);
-            var biggest = values.reduce(function (previous, current) {
-                return previous < current ? current : previous;
-            }, 0);
-            xValueAxis.min = smallest
-            xValueAxis.max = biggest
-            xDateAxis.min = Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
-            xDateAxis.max = Date()
+            root.xMaximum = Date.parse(new Date())
+            root.xMinimum = Date.parse(new Date())
         }
 
         // Redéfinit la valeur maximale de l'axe y (la valeur minimale sera toujours de 0
@@ -117,13 +97,12 @@ Item {
         var values = []
         for (var splineIndex=0 ; splineIndex < root.datas.length ; splineIndex++) {
             for (var pointIndex=0 ; pointIndex < root.datas[splineIndex].length ; pointIndex++) {
-                values.append(root.datas[splineIndex][pointIndex][1])
+                values.push(root.datas[splineIndex][pointIndex][1])
             }
         }
-        var biggest = values.reduce(function (previous, current) {
+        root.yMaximum = values.reduce(function (previous, current) {
             return previous < current ? current : previous;
         }, 0);
-        yValueAxis.max = biggest
     }
 
     // Détecte lorsque la liste des splines est mise à jour, ajoute un delai avant l'appel et met à jour les limites et les valeurs
