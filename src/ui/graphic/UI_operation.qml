@@ -30,7 +30,43 @@ Item {
 
     // Fonction de mise à jour des graphiques, à appeler à chaque fois que la marche visible ou la sélection change
     function update() {
-        // TODO : définir
+        // Récupère la date limite de prise en compte
+        var daysVisible = root.visiblePeriod == "year" ? 365 : root.visiblePeriod == "month" ? 30 : 7
+        var limitDate = new Date() - daysVisible * 24 * 60 * 60 * 1000
+
+        // Commence par les données sur l'eau claire
+        var datas = []
+        for (var splineIndex=0 ; splineIndex < root.cleanWaterData.length ; splineIndex++) {
+            datas.push([])
+            for (var pointIndex=0 ; pointIndex < root.cleanWaterData[splineIndex].length ; pointIndex++) {
+                // Convertit la date en format UNIX et ajoute la valeur avec la date au format Unix si celle-ci doit ête affichée
+                var unixDate = (new Date(root.cleanWaterData[splineIndex][pointIndex][0][0], root.cleanWaterData[splineIndex][pointIndex][0][1] - 1, root.cleanWaterData[splineIndex][pointIndex][0][2])).getTime()
+                if (unixDate > limitDate) {
+                    datas[splineIndex].push([unixDate, root.cleanWaterData[splineIndex][pointIndex][1]])
+                }
+            }
+
+            // Trie la spline par ordre d'apparition des points sur l'axe des x
+            datas[datas.length - 1].sort(function(a, b) {return a[0] - b[0]})
+        }
+
+        // Ajoute les données sur l'eau sale
+        for (var splineIndex=0 ; splineIndex < root.poopooWaterData.length ; splineIndex++) {
+            datas.push([])
+            for (var pointIndex=0 ; pointIndex < root.poopooWaterData[splineIndex].length ; pointIndex++) {
+                // Convertit la date en format UNIX et ajoute la valeur avec la date au format Unix si celle-ci doit ête affichée
+                var unixDate = (new Date(root.poopooWaterData[splineIndex][pointIndex][0][0], root.poopooWaterData[splineIndex][pointIndex][0][1] - 1, root.poopooWaterData[splineIndex][pointIndex][0][2])).getTime()
+                if (unixDate > limitDate) {
+                    datas[root.cleanWaterData.length + splineIndex].push([unixDate, root.poopooWaterData[splineIndex][pointIndex][1]])
+                }
+            }
+
+            // Trie la spline par ordre d'apparition des points sur l'axe des x
+            datas[datas.length - 1].sort(function(a, b) {return a[0] - b[0]})
+        }
+
+        // Redéfinit les valeurs (ce qui va mettre à jour les valeurs limites et les valeurs visibles
+        operationChart.datas = datas
     }
 
 
