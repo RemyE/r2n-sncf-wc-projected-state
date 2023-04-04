@@ -42,8 +42,20 @@ class UIprediction:
 
     def reset(self) -> None:
         """Réinitialise la page de prédiction."""
-        self
+        self.__component.reset()
+
+    def gather_data(self) -> None:
+        """A partir des sélections réalisées par l'utilisateur"""
+        # Récupère la liste des opérations
+        operations = self.__component.property("selections")
+        if isinstance(operations, QJSValue):
+            operations = operations.toVariant()
+
+        # Transforme les liste de données au bon format et les indiques à l'application
+        self.__component.setProperty("cleanWaterData", self.__app.database.clean_water_evolution(operations))
+        self.__component.setProperty("poopooWaterData", self.__app.database.poopoo_water_evolution(operations))
+        self.__component.updateValues()
 
     def save(self) -> None:
         """Formate les données actuellement affichées et les sauvegardes."""
-        pass
+        pass        # TODO : ùme définir
