@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 # Librairies graphiques
 from PySide6.QtCore import QObject
+from PySide6.QtQml import QJSValue
 
 
 # Project libraries
