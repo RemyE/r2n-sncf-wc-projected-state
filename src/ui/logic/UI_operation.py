@@ -21,6 +21,8 @@ class UIoperation:
     __app: "UIapp" = None
     __component: QObject = None
 
+    output_folder_path: str = f"{PROJECT_DIR}output\\operation"
+
     def __init__(self, ui_app):
         """Initialise la page des marches
 
@@ -54,4 +56,12 @@ class UIoperation:
 
     def save(self) -> None:
         """Formate les données actuellement affichées et les sauvegardes."""
-        pass
+        # Récupère le nom/numéro de mission
+        operation = self.__component.property("operationName")
+
+        # Enregistre le fichier avec les informations, en supprimant la colonne du nom de mission
+        datas = self.__app.database.operation_database(operation)
+        datas = datas[datas.columns[~datas.columns.isin(['unknown_IMISSIONTRAINNUMBER'])]]
+        datas.to_csv(f"{UIoperation.output_folder_path}\\{operation}.csv")
+        with open(f"{UIoperation.output_folder_path}\\{operation}.txt", "w") as file:
+            file.write(datas.to_string())
