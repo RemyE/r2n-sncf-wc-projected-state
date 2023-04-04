@@ -55,3 +55,16 @@ class Database:
         return [[[[int(date) for date in re.split(r"[^\d]+", point["jour"])[:3]], point[data_type] + 1]         # TODO : + 1 pour visualiser, à enlever
                  for _, point in datas.iterrows()]
                 for data_type in ("min", "mean", "max")]
+
+    def clean_water_evolution(self, operations: list[str]) -> list[list[float], list[float], list[float]]:
+        """"""
+        datas = [self.operation_database(operation).tail(1) for operation in operations]
+
+        return [[float(point.iloc[0][data_type]) if not point.empty else 0.0
+                 for point in datas] for data_type in ("min", "mean", "max")]
+
+    def poopoo_water_evolution(self, operations: list[str]) -> list[list[float], list[float], list[float]]:
+        datas = [self.operation_database(operation).tail(1) for operation in operations]
+
+        return [[float(point.iloc[0][data_type] + 1) if not point.empty else 0.0            # TODO : + 1 pour visualiser, à enlever
+                 for point in datas] for data_type in ("min", "mean", "max")]
