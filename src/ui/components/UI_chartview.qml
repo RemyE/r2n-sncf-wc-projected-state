@@ -16,18 +16,21 @@ Item {
     property var datas: []                // Données des SplineSeries. Format: [[[x11, y11], [x12, y12], ...], ...] ou [[[[year11, month11, day11], y11], [[year12, month12, day12], y12], ...], ...]
     property var names: []                // Noms des SplineSeries. Format: ["name", ...]
     property var colors: []               // Couleurs des SplineSeries. Format ["color (hex)", ...]
-    readonly property bool dateFormat: datas.length > 0 && datas[0].length > 0 && isNaN(datas[0][0][0])
 
     // Propriétés sur les axes (axes communs pour x et séparés pour y)
     property string xTitle: ""
+    property double xMinimum: 0.0
+    property double xMaximum: 0.0
     property int xDecimals: 2
     property int xTicks: 4
     property int xMinorTicks: 0
+    property bool xAxisDateFormat: false
     property string yTitle: ""
+    property double yMinimum: 0.0
+    property double yMaximum: 0.0
     property int yDecimals: 2
     property int yTicks: 4
     property int yMinorTicks: 0
-    // Les valeurs limites sur chaque axes sont définis selon la valeur maximale pour toujours afficher un maximum de données
 
     // Propriétés sur les tailles de textes
     property int fontSize: 12
