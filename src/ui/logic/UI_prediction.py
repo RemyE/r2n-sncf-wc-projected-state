@@ -30,9 +30,13 @@ class UIprediction:
             Instance de l'application pour accéder aux autres pages
         """
         self.__app = ui_app
-        self.__component = self.__app.win.findChild(QObject, "operation")
+        self.__component = self.__app.win.findChild(QObject, "prediction")
+
+        # Indique les différnetes valeurs de simulation
+        self.__component.setProperty("operations", self.__app.database.operations)
 
         # Connecte les différents signaux à leurs fonctions
+        self.__component.dataChanged.connect(self.gather_data)
         self.__component.findChild(QObject, "returnButton").clicked.connect(self.__app.win.go_back)
         self.__component.findChild(QObject, "saveButton").clicked.connect(self.save)
 
