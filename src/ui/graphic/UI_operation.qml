@@ -137,32 +137,24 @@ Item {
             id: operationChart
 
             anchors.fill: parent
+            anchors.rightMargin: 30
 
             xTitle: "Date de la marche"
             xDecimals: 0
             xTicks: 4
             xMinorTicks: 0
 
-            ySplinesTitle: root.visibleData === "levels" ? "Niveaux d'eau (en l, moyenné sur 7 jours)"  // Niveaux d'eau moyennés sur 7 jours en mode "levels"
-                                                         : root.visibleData === "uses" ? ""             // Aucune spline series en mode "uses"
-                                                                                       : ""             // Nouvelle donnée non définie
-            ySplinesDecimals: root.visibleData === "levels" ? 2                                         // contenance (pas entier)
-                                                            : root.visibleData === "uses" ? 0           // Aucune valeur
-                                                                                          : 0           // Nouvelle donnée non définie
-            ySplinesTicks: 4
-            ySplinesMinorTicks: 2
+            yTitle: "Consommation et remplissage des réservoirs d'eau (minimum, moyen, maximum)"
+            yDecimals: 2
+            yTicks: 4
+            yMinorTicks: 2
 
-            yBarsTitle: root.visibleData === "levels" ? "Niveaux d'eau (en l)"                          // Niveaux d'eau moyennés sur 7 jours en mode "levels"
-                                                       : root.visibleData === "uses" ? ""               // Aucune spline series en mode "uses"
-                                                                                     : ""               // Nouvelle donnée non définie
-            yBarsDecimals: root.visibleData === "levels" ? 2                                            // contenance (pas entier)
-                                                          : root.visibleData === "uses" ? 0             // Compte (entier)
-                                                                                        : 0             // Nouvelle donnée non définie
-            yBarsTicks: 4
-            yBarsMinorTicks: 2
+            // Données définies par la fonction de mise à jour
+            names: ["Consommation eau claire (minimum)", "Consommation eau claire (moyenne)", "Consommation eau claire (maximum)",
+                    "Remplissage eau sale (minimum)", "Remplissage eau sale (moyenne)", "Remplissage eau salle (maximum)"]
+            colors: ["#ADD8E6", "#6495ED", "#0000FF", "#DEB887", "#DAA520", "#A0522D"]
 
-            splinesData: [[[0.0, 1], [0.5, 0.2]], [[0.1, 0.3], [0.2, 0.7], [0.6, 0.4]]]
-            splinesLegend: [["#40E0D0", "Eau claire"], ["#B8860B", "Eau sale"]]
+            xAxisDateFormat: true
         }
 
         // Row Layout pour sélectionner le temps à afficher
@@ -171,8 +163,8 @@ Item {
 
             anchors.top: parent.top
             anchors.topMargin: 8 + parent.border.width
-            anchors.left: parent.left
-            anchors.leftMargin: anchors.topMargin
+            anchors.right: parent.right
+            anchors.rightMargin: anchors.topMargin
             height: returnButton.height
             width: returnButton.width * periodRepeater.count + spacing * (periodRepeater.count - 1)
             spacing: anchors.topMargin - parent.border.width
