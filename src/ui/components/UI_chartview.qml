@@ -124,118 +124,22 @@ Item {
         yValueAxis.max = biggest
     }
 
-    // Détecte lorsque la liste des splines est mise à jour
-    onDatasChanged: {
-        // Redéfinit les valeurs limites des graphiques
-        root.updateLimits()
+    // Détecte lorsque la liste des splines est mise à jour, ajoute un delai avant l'appel et met à jour les limites et les valeurs
+    onDatasChanged: delayTimer.start()
 
-        // Passe sur chacune des bars et la met à jour
-        for (var chartIndex=0 ; chartIndex < charts.count ; chartIndex++) {
-            root.updateValues(chartIndex)
+    Timer {
+        id: delayTimer
+
+        interval: 50; repeat: false
+        onTriggered: {
+            // Redéfinit les valeurs limites des graphiques
+            root.updateLimits()
+
+            // Passe sur chacune des bars et la met à jour
+            for (var chartIndex=0 ; chartIndex < charts.count ; chartIndex++) {
+                root.updateValues(chartIndex)
+            }
         }
-    }
-
-
-
-    // Liste des différents axes, utilisés par le graphique
-    ValueAxis {
-        id: xValueAxis
-
-        // Les valeurs minimales et maximales sont redéfinies lors de la mise à jour des données
-        min: 0
-        max: 0
-
-        color: root.textEnabledColor
-        gridLineColor: root.textDisabledColor
-        gridVisible: true
-        lineVisible: true
-        tickCount: Math.max(root.xTicks, 2)
-        minorTickCount: Math.max(root.xMinorTicks, 0)
-
-        labelsColor: root.textEnabledColor
-        minorGridLineColor: root.textDisabledColor
-        labelFormat: `%.${root.xDecimals}f`
-
-        titleText: `<font color='${root.textEnabledColor}'>${root.xTitle}</font>`
-        titleFont.pixelSize: root.titleFontSize
-    }
-
-    ValueAxis {
-        id: xValueInvisible
-
-        // Les valeurs minimales sont les mêmes que la version visible, afin que les valeurs s'allignent bien
-        min: xValueAxis.min
-        max: xValueAxis.max
-
-        // Cache le composant pour montrer l'axe une unique fois
-        visible: false
-    }
-
-
-
-    DateTimeAxis {
-        id: xDateAxis
-
-        // Les valeurs minimales et maximales sont redéfinies lors de la mise à jour des données
-        min: new Date()
-        max: new Date()
-
-        color: root.textEnabledColor
-        gridLineColor: root.textDisabledColor
-        gridVisible: true
-        lineVisible: true
-        tickCount: Math.max(root.xTicks, 2)
-
-        labelsColor: root.textEnabledColor
-        minorGridLineColor: root.textDisabledColor
-        format: "dd/MM/yyyy"
-
-        titleText: `<font color='${root.textEnabledColor}'>${root.xTitle}</font>`
-        titleFont.pixelSize: root.titleFontSize
-    }
-
-    DateTimeAxis {
-        id: xDateInvisible
-
-        // Les valeurs minimales sont les mêmes que la version visible, afin que les valeurs s'allignent bien
-        min: xDateAxis.min
-        max: xDateAxis.max
-
-        // Cache le composant pour montrer l'axe une unique fois
-        visible: false
-    }
-
-    ValueAxis {
-        id: yValueAxis
-
-        // Les valeurs minimales et maximales sont redéfinies lors de la mise à jour des données
-        min: 0
-        max: 1
-
-        color: root.textEnabledColor
-        gridLineColor: root.textDisabledColor
-        gridVisible: true
-        lineVisible: true
-        tickCount: Math.max(root.ySplinesTicks, 2)
-        minorTickCount: Math.max(root.ySplinesMinorTicks, 0)
-
-        labelsColor: root.textEnabledColor
-        minorGridLineColor: root.textDisabledColor
-        labelFormat: `%.${root.ySplinesDecimals}f`
-
-        titleText: `<font color='${root.textEnabledColor}'>${root.ySplinesTitle}</font>`
-        titleFont.pixelSize: root.titleFontSize
-    }
-
-    ValueAxis {
-        id: yValueInvisible
-
-        // Les valeurs minimales sont les mêmes que la version visible, afin que les valeurs s'allignent bien
-        min: ySplinesValueAxis.min
-        max: ySplinesValueAxis.max
-
-        // Cache le composant pour montrer l'axe une unique fois
-        visible: false
     }
 
 
@@ -291,16 +195,76 @@ Item {
                 color: root.colors[splineIndex]
 
                 // Définit les axes, selon l'index
-                axisX: splineIndex == 0 ? (root.dateFormat ? xDateAxis
-                                                           : xValueAxis)
-                                        : (root.dateFormat ? xDateInvisible
-                                                           : xValueInvisible)
-                axisY: splineIndex == 0 ? yValueAxis
-                                        : yValueInvisible
+                axisX: ValueAxis {
+                    // Les valeurs minimales et maximales sont redéfinies lors de la mise à jour des données
+                    min: root.xMinimum
+                    max: root.xMaximum
+
+                    color: root.textEnabledColor
+                    gridLineColor: root.textDisabledColor
+                    gridVisible: true
+                    lineVisible: true
+                    tickCount: Math.max(root.xTicks, 2)
+                    minorTickCount: Math.max(root.xMinorTicks, 0)
+
+                    labelsColor: root.textEnabledColor
+                    minorGridLineColor: root.textDisabledColor
+                    labelFormat: `%.${root.xDecimals}f`
+                    labelsVisible: !root.xAxisDateFormat
+
+                    titleText: `<font color='${root.textEnabledColor}'>${root.xTitle}</font>`
+                    titleFont.pixelSize: root.titleFontSize
+                    titleVisible: true
+                }
+
+                axisY: ValueAxis {
+                    // Les valeurs minimales et maximales sont redéfinies lors de la mise à jour des données
+                    min: root.yMinimum
+                    max: root.yMaximum
+
+                    color: root.textEnabledColor
+                    gridLineColor: root.textDisabledColor
+                    gridVisible: true
+                    lineVisible: true
+                    tickCount: Math.max(root.yTicks, 2)
+                    minorTickCount: Math.max(root.yMinorTicks, 0)
+                    labelsVisible: true
+
+                    labelsColor: root.textEnabledColor
+                    minorGridLineColor: root.textDisabledColor
+                    labelFormat: `%.${root.yDecimals}f`
+
+                    titleText: `<font color='${root.textEnabledColor}'>${root.yTitle}</font>`
+                    titleFont.pixelSize: root.titleFontSize
+                    titleVisible: true
+                }
             }
         }
     }
 
     // Fais une première update de toutes les splines pour les montrer une fois le composant chargé
     Component.onCompleted: {root.updateLimits(); root.updateValues(-1) }
+
+
+    // Repeater pour afficher les dates, si l'utilisateur préfère afficher les axes des X comme dates
+    Repeater {
+        id: xAxisDate
+
+        model: Math.max(root.xTicks, 2)
+
+        Text {
+            x: root.x + 40 +  3 * root.fontSize + (root.width - 40 - 3 * root.fontSize) * index / (Math.max(root.xTicks, 2) - 1) - 30
+            y: root.y + root.height - 3 * root.fontSize - 40 - 5
+
+            readonly property var date: new Date(parseInt(root.xMinimum + index / (Math.max(root.xTicks, 2) - 1) * (root.xMaximum - root.xMinimum)))
+            text: `${date.getUTCDate()}-${date.getUTCMonth() + 1}-${date.getUTCFullYear()}`
+
+            color: root.textEnabledColor
+            font.pixelSize: root.fontSize
+            font.family: "Verdana"
+            visible: root.xAxisDateFormat
+        }
+    }
+
+
 }
