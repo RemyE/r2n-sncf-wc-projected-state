@@ -95,8 +95,9 @@ Item {
         anchors.verticalCenter: returnButton.verticalCenter
 
         text: root.operationName
+        font.pixelSize: 24
+        font.family: "Verdana"
         color: root.valid ? returnButton.textEnabledColor : returnButton.textDisabledColor
-
     }
 
     // Bouton de sauegarde
