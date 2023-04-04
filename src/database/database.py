@@ -36,23 +36,21 @@ class Database:
         """Données présentes pour une opération particulière."""
         return self.__database[self.__database["unknown_IMISSIONTRAINNUMBER"] == operation]
 
-    def format_clean_water(self, operation: str, last: bool = False) -> list[list[list[list[int, int, int], int],
-                                                                                  list[list[int, int, int], int],
-                                                                                  list[list[int, int, int], int]]]:
+    def format_clean_water(self, operation: str) -> list[list[list[list[int, int, int], int],
+                                                              list[list[int, int, int], int],
+                                                              list[list[int, int, int], int]]]:
         """formatte les donnée sur l'eau clairs pour une mission spécifique (retourne le dernier si indiqué."""
         datas = self.operation_database(operation)
-        datas = datas.tail(1 if last else len(datas.index))
 
         return [[[[int(date) for date in re.split(r"[^\d]+", point["jour"])[:3]], point[data_type]]
                  for _, point in datas.iterrows()]
                 for data_type in ("min", "mean", "max")]
 
-    def format_poopoo_water(self, operation: str, last: bool = False) -> list[list[list[list[int, int, int], int],
-                                                                                   list[list[int, int, int], int],
-                                                                                   list[list[int, int, int], int]]]:
+    def format_poopoo_water(self, operation: str) -> list[list[list[list[int, int, int], int],
+                                                               list[list[int, int, int], int],
+                                                               list[list[int, int, int], int]]]:
         """formatte les donnée sur l'eau clairs pour une mission spécifique (retourne le dernier si indiqué."""
         datas = self.__database[self.__database["unknown_IMISSIONTRAINNUMBER"] == operation]
-        datas = datas.tail(1 if last else len(datas.index))
 
         return [[[[int(date) for date in re.split(r"[^\d]+", point["jour"])[:3]], point[data_type] + 1]         # TODO : + 1 pour visualiser, à enlever
                  for _, point in datas.iterrows()]

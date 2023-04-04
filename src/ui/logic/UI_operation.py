@@ -48,8 +48,8 @@ class UIoperation:
         """
         # Récupère et mets à jour les données
         self.__component.setProperty("operationName", operation)
-        self.__component.setProperty("cleanWaterData", self.__app.database.format_clean_water(operation, last=False))
-        self.__component.setProperty("poopooWaterData", self.__app.database.format_poopoo_water(operation, last=False))
+        self.__component.setProperty("cleanWaterData", self.__app.database.format_clean_water(operation))
+        self.__component.setProperty("poopooWaterData", self.__app.database.format_poopoo_water(operation))
 
         # Met à jour les graphiques à l'aide de la fonction update
         self.__component.update()
