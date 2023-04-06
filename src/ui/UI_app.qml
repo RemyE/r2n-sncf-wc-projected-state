@@ -13,7 +13,7 @@ Window {
     color: window.backgroundColor
 
     // Propriété sur les couleurs
-    property string backgroundColor: "#000000"
+    property string backgroundColor: "#FFFFFF"
 
     // Fonctions pour changer la page active
     function go_back() {

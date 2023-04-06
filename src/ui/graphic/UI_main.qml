@@ -12,9 +12,9 @@ Item {
     property var operationSources: []
 
     // Propriétés sur les couleurs utilisées
-    property string backgroundColor: "#000000"
-    property string textColor: "#C8C8C8"
-    property string borderColor: "#C8C8C8"
+    property string backgroundColor: "#FFFFFF"
+    property string textColor: "#949494"
+    property string borderColor: "#949494"
 
 
     // Signaux à surchager en QML ou en Python

@@ -37,10 +37,10 @@ Item {
     property int titleFontSize: root.fontSize * 1.5
 
     // Propriétés sur les couleurs utilisées
-    property string backgroundColor: "#000000"
-    property string textEnabledColor: "#C8C8C8"
-    property string textDisabledColor: "#939393"
-    property string highlightColor: "#000080"
+    property string backgroundColor: "#FFFFFF"
+    property string textEnabledColor: "#949494"
+    property string textDisabledColor: "#C8C8C8"
+    property string highlightColor: "#FFB5FE"
 
     // Fonction pour transformer un nombre au bon format et au bon nombre de décimales en écriture non-scientifique
     function toString(number, decimals) {
