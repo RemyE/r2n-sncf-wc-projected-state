@@ -18,20 +18,20 @@ Item {
     property int month: (new Date()).getUTCMonth() + 1
     property int year: (new Date()).getUTCFullYear()
 
-    // Propriété sur les missions
+    // Propriété sur les opérations
     property var cleanWaterData: []         // format [[[year, month, day], [min, avg, max]], ...] -> SplineSeries
     onCleanWaterDataChanged: root.update()
     property var poopooWaterData: []        // format [[[year, month, day], [min, avg, max]], ...] -> SplineSeries
     onPoopooWaterDataChanged: root.update()
 
-    property string visiblePeriod: "week"           // Valeurs possibles : "week", "month", "year"
+    property string visiblePeriod: "week"           // Valeurs possibles : "week", "month", "year", "all"
     onVisiblePeriodChanged: root.update()
 
 
     // Fonction de mise à jour des graphiques, à appeler à chaque fois que la marche visible ou la sélection change
     function update() {
         // Récupère la date limite de prise en compte
-        var daysVisible = root.visiblePeriod == "year" ? 365 : root.visiblePeriod == "month" ? 30 : 7
+        var daysVisible = root.visiblePeriod == "year" ? 365 : root.visiblePeriod == "month" ? 30 : root.visiblePeriod == "week" ? 7 : parseInt(Date.parse(new Date())  / 24 / 60 / 60 / 1000)
         var limitDate = new Date() - daysVisible * 24 * 60 * 60 * 1000
 
         // Commence par les données sur l'eau claire
@@ -42,7 +42,7 @@ Item {
                 // Convertit la date en format UNIX et ajoute la valeur avec la date au format Unix si celle-ci doit ête affichée
                 var unixDate = (new Date(root.cleanWaterData[splineIndex][pointIndex][0][0], root.cleanWaterData[splineIndex][pointIndex][0][1] - 1, root.cleanWaterData[splineIndex][pointIndex][0][2])).getTime()
                 if (unixDate > limitDate) {
-                    datas[splineIndex].push([unixDate, root.cleanWaterData[splineIndex][pointIndex][1]])
+                    datas[datas.length - 1].push([unixDate, root.cleanWaterData[splineIndex][pointIndex][1]])
                 }
             }
 
@@ -57,7 +57,7 @@ Item {
                 // Convertit la date en format UNIX et ajoute la valeur avec la date au format Unix si celle-ci doit ête affichée
                 var unixDate = (new Date(root.poopooWaterData[splineIndex][pointIndex][0][0], root.poopooWaterData[splineIndex][pointIndex][0][1] - 1, root.poopooWaterData[splineIndex][pointIndex][0][2])).getTime()
                 if (unixDate > limitDate) {
-                    datas[root.cleanWaterData.length + splineIndex].push([unixDate, root.poopooWaterData[splineIndex][pointIndex][1]])
+                    datas[datas.length - 1].push([unixDate, root.poopooWaterData[splineIndex][pointIndex][1]])
                 }
             }
 
