@@ -43,9 +43,85 @@ Item {
 
     // Fonction de mise à jour des graphiques, à appeler dès que les données changent où qu'une marche est ajoutée/supprimée
     function updateValues() {
-        // A partir de la valeur
+        // Initialise la liste des valeurs cumulatives, en commançant au niveau max pour les eaux clairs et y ajoute toutes les valeurs cumulées
+        // Attention! Ici on compte (on pars d'un réservoir plein que l'on vide)
+        var cleanCumData = [[root.cleanWaterBaseLevel, root.cleanWaterBaseLevel, root.cleanWaterBaseLevel]]
+        for (var operationIndex = 0 ; operationIndex < root.cleanWaterData.length ; operationIndex++) {
+            cleanCumData.push([Math.max(cleanCumData[operationIndex][0] - root.cleanWaterData[operationIndex][0], 0),
+                               Math.max(cleanCumData[operationIndex][1] - root.cleanWaterData[operationIndex][1], 0),
+                               Math.max(cleanCumData[operationIndex][2] - root.cleanWaterData[operationIndex][2], 0)])
 
+            // Si le nouveau niveau minimum ou moyen dépasse le seuil, indique l'index de criticité
+            if (cleanCumData[operationIndex + 1][2] === 0 && cleanCumData[operationIndex][2] !== 0) {
+                root.cleanWaterWarningIndex = operationIndex
+            }
+            if (cleanCumData[operationIndex + 1][1] === 0 && cleanCumData[operationIndex][1] !== 0) {
+                root.cleanWaterCriticalIndex = operationIndex
+            }
+        }
 
+        // Si les seuils de criticité n'ont pas été dépassés, les définis au nombre de operation
+        if (cleanCumData[cleanCumData.length - 1][2] !== 0) {
+            root.cleanWaterWarningIndex = cleanCumData.length
+        }
+        if (cleanCumData[cleanCumData.length - 1][1] !== 0) {
+            root.cleanWaterCriticalIndex = cleanCumData.length
+        }
+
+        // Défini la liste des valeurs visible par l'utilisateur et le graphe
+        root.cumCleanWaterData = cleanCumData
+
+        // Réitère le même procédé avec les valeurs d'eau sale
+        // Initialise la liste des valeurs cumulatives, en commançant au niveau max pour les eaux clairs et y ajoute toutes les valeurs cumulées
+        // Attention! Ici, on décompte (on pars d'un réservoir vide que l'on rempli)
+        var poopooCumData = [[0, 0, 0]]
+        for (var operationIndex = 0 ; operationIndex < root.poopooWaterData.length ; operationIndex++) {
+            poopooCumData.push([Math.min(poopooCumData[operationIndex][0] + root.poopooWaterData[operationIndex][0], root.poopooWaterBaseLevel),
+                                Math.min(poopooCumData[operationIndex][1] + root.poopooWaterData[operationIndex][1], root.poopooWaterBaseLevel),
+                                Math.min(poopooCumData[operationIndex][2] + root.poopooWaterData[operationIndex][2], root.poopooWaterBaseLevel)])
+
+            // Si le nouveau niveau minimum ou moyen dépasse le seuil, indique l'index de criticité
+            if (poopooCumData[operationIndex + 1][2] === root.poopooWaterBaseLevel && poopooCumData[operationIndex][2] !== root.poopooWaterBaseLevel) {
+                root.poopooWaterWarningIndex = operationIndex
+            }
+            if (cleanCumData[operationIndex + 1][1] === root.poopooWaterBaseLevel && cleanCumData[operationIndex][1] !== root.poopooWaterBaseLevel) {
+                root.poopooWaterCriticalIndex = operationIndex
+            }
+        }
+
+        // Si les seuils de criticité n'ont pas été dépassés, les définis au nombre de operation
+        if (cleanCumData[cleanCumData.length - 1][2] !== root.poopooWaterBaseLevel) {
+            root.poopooWaterWarningIndex = poopooCumData.length
+        }
+        if (cleanCumData[cleanCumData.length - 1][1] !== root.poopooWaterBaseLevel) {
+            root.poopooWaterCriticalIndex = poopooCumData.length
+        }
+
+        // Défini la liste des valeurs visible par l'utilisateur et le graphe
+        root.cumPoopooWaterData = poopooCumData
+
+        // Reconvertit toutes les valeurs, cette fois pour les envoyées au chartView
+        // Commence par les données sur l'eau claire
+        var datas = []
+        for (var splineIndex=0 ; splineIndex < (root.cumCleanWaterData.length > 0 ? root.cumCleanWaterData[0].length : 0) ; splineIndex++) {
+            // Ajoute une liste avec les points et rajoute chacun des points
+            datas.push([])
+            for (var pointIndex=0 ; pointIndex < root.cumCleanWaterData.length ; pointIndex++) {
+                datas[datas.length - 1].push([pointIndex, root.cumCleanWaterData[pointIndex][splineIndex]])
+            }
+        }
+
+        // Ajoute les données sur l'eau sale
+        for (var splineIndex=0 ; splineIndex < (root.cumPoopooWaterData.length > 0 ? root.cumPoopooWaterData[0].length : 0) ; splineIndex++) {
+            // Ajoute une liste avec les points et rajoute chacun des points
+            datas.push([])
+            for (var pointIndex=0 ; pointIndex < root.cumPoopooWaterData.length ; pointIndex++) {
+                datas[datas.length - 1].push([pointIndex, root.cumPoopooWaterData[pointIndex][splineIndex]])
+            }
+        }
+        predictionChart.datas = datas
+
+        // Lance le chronomètre pour mettre à jour l'affichage et correctement mettre à jour la liste des opérations effectuées
         delayTimer.start()
     }
 
