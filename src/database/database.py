@@ -39,7 +39,7 @@ class Database:
     def format_clean_water(self, operation: str) -> list[list[list[list[int, int, int], int],
                                                               list[list[int, int, int], int],
                                                               list[list[int, int, int], int]]]:
-        """formatte les donnée sur l'eau clairs pour une mission spécifique (retourne le dernier si indiqué."""
+        """formatte les donnée sur l'eau clairs pour une opération spécifique (retourne le dernier si indiqué."""
         datas = self.operation_database(operation)
 
         return [[[[int(date) for date in re.split(r"[^\d]+", point["jour"])[:3]], point[data_type]]
@@ -49,7 +49,7 @@ class Database:
     def format_poopoo_water(self, operation: str) -> list[list[list[list[int, int, int], int],
                                                                list[list[int, int, int], int],
                                                                list[list[int, int, int], int]]]:
-        """formatte les donnée sur l'eau clairs pour une mission spécifique (retourne le dernier si indiqué."""
+        """formatte les donnée sur l'eau clairs pour une opération spécifique (retourne le dernier si indiqué."""
         datas = self.__database[self.__database["unknown_IMISSIONTRAINNUMBER"] == operation]
 
         return [[[[int(date) for date in re.split(r"[^\d]+", point["jour"])[:3]], point[data_type] + 1]         # TODO : + 1 pour visualiser, à enlever
