@@ -166,8 +166,9 @@ Item {
         anchors.verticalCenter: returnButton.verticalCenter
         
         text: "Outil de prédiction"
+        font.pixelSize: 24
+        font.family: "Verdana"
         color: root.valid ? returnButton.textEnabledColor : returnButton.textDisabledColor
-        
     }
     
     // Bouton de sauvegarde
