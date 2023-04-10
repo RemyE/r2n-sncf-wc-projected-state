@@ -22,6 +22,8 @@ Item {
     onSelectionChanged: root.changed()
 
     // Propriétés sur l'étatdu composant
+    property var critical: []
+    property var warning: []
     property bool enabled: true
     property bool add: true
 
@@ -243,5 +245,23 @@ Item {
     }
 
 
-    // TODO : ajouter le surlignage
+    // Repeater pour les surlignages de sécurités
+    Repeater {
+        id: highlights
+
+        model: Math.min(root.warning.length, root.critical.length)
+
+        Rectangle {
+            id: highlight
+
+            anchors.left: parent.left
+            anchors.right: parent.right
+            y: index * root.height / Math.max(highlights.count, 1)
+            height: root.height / Math.max(highlights.count, 1)
+
+            color: root.critical[index] ? "red" : root.warning[index] ? "orange" : "transparent"
+            opacity: 0.3
+            enabled: false      // enabled à False pour ne pas bloquer le titre
+        }
+    }
 }
