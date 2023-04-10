@@ -188,7 +188,8 @@ Item {
 
                 model: [["semaine", "week"],
                         ["mois", "month"],
-                        ["année", "year"]]
+                        ["année", "year"],
+                        ["complet", "tout"]]
 
                 UI_button {
                     width: returnButton.width
