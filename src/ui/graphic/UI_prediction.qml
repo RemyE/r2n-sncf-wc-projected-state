@@ -341,7 +341,7 @@ Item {
     }
 
 
-    // Rectangle pour la structure de visualisation, de sélection et d'ajout des missions
+    // Rectangle pour la structure de visualisation, de sélection et d'ajout des operations
     Rectangle {
         id: predictionBody
 
@@ -356,6 +356,39 @@ Item {
         color: returnButton.backgroundColor
         border.color: returnButton.textEnabledColor
 
-        // TODO : ajouter le UI_chartview
+
+        UI_chartview {
+            id: predictionChart
+
+            anchors.fill: parent
+            anchors.bottomMargin: fontSize
+            anchors.leftMargin: fontSize
+            anchors.topMargin: 1.5 * fontSize
+            anchors.rightMargin: 3 * fontSize
+
+            xTitle: "Index"
+            xMinimumAuto: false
+            xMinimum: 0
+            xMaximumAuto: false
+            xMaximum: root.selections.length
+            xDecimals: 0
+            xTicks: Math.max(root.selections.length + 1, 2)
+            xDateFormat: false
+
+            yTitle: "Evolution des niveaux d'eau"
+            yMinimumAuto: false
+            yMinimum: 0
+            yMaximumAuto: false
+            yMaximum: Math.max(root.cleanWaterBaseLevel, root.poopooWaterBaseLevel)
+            yDecimals: 2
+            yTicks: 6
+            yDateFormat: false
+
+            // Données définies par la fonction de mise à jour
+            names: ["Niveau eau claire (minimum)", "Niveau eau claire (moyenne)", "Niveau eau claire (maximum)",
+                    "Niveau eau sale (minimum)", "Niveau eau sale (moyenne)", "Niveau eau sale (maximum)"]
+            colors: ["#ADD8E6", "#6495ED", "#0000FF", "#DEB887", "#DAA520", "#A0522D"]
+            widths: [1, 2, 1, 1, 2, 1]
+        }
     }
 }
