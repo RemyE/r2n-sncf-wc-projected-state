@@ -16,21 +16,51 @@ Item {
     property var datas: []                // Données des SplineSeries. Format: [[[x11, y11], [x12, y12], ...], ...] ou [[[[year11, month11, day11], y11], [[year12, month12, day12], y12], ...], ...]
     property var names: []                // Noms des SplineSeries. Format: ["name", ...]
     property var colors: []               // Couleurs des SplineSeries. Format ["color (hex)", ...]
+    property var widths: []               // Epaisseur des traits des SplineSeries. Format [int, int, ...]
 
-    // Propriétés sur les axes (axes communs pour x et séparés pour y)
+    // Propriétés pour l'axe X
     property string xTitle: ""
+
+    property bool xMinimumAuto: false
+    onXMinimumAutoChanged: root.updateLimits()
     property double xMinimum: 0.0
+    onXMinimumChanged: root.updateLimits()
+    readonly property double xDisplayMinimum: xAxis.minimum
+    property bool xMaximumAuto: false
+    onXMaximumAutoChanged: root.updateLimits()
     property double xMaximum: 0.0
+    onXMaximumChanged: root.updateLimits()
+    readonly property double xDisplayMaximum: xAxis.maximum
     property int xDecimals: 2
+
     property int xTicks: 4
-    property int xMinorTicks: 0
-    property bool xAxisDateFormat: false
+    property bool xDateFormat: false
+    onXDateFormatChanged: root.updateLimits()
+
+    readonly property int xAxisOrigin: root.x + (root.titleFontSize * (root.xTitle !== "") + 2 * root.fontSize)
+    readonly property int xAxisLength: root.width - root.xAxisOrigin + root.x
+
+    // Propriétés pour l'axe Y
     property string yTitle: ""
+
+    property bool yMinimumAuto: false
+    onYMinimumAutoChanged: root.updateLimits()
     property double yMinimum: 0.0
+    onYMinimumChanged: root.updateLimits()
+    readonly property double yDisplayMinimum: yAxis.minimum
+    property bool yMaximumAuto: false
+    onYMaximumAutoChanged: root.updateLimits()
     property double yMaximum: 0.0
+    onYMaximumChanged: root.updateLimits()
+    readonly property double yDisplayMaximum: yAxis.maximum
     property int yDecimals: 2
+
     property int yTicks: 4
-    property int yMinorTicks: 0
+    property bool yDateFormat: false
+    onYDateFormatChanged: root.updateLimits()
+
+    readonly property int yAxisOrigin: root.y + root.height - (root.titleFontSize * (root.yTitle !== "") + 2 * root.fontSize)   // TODO : ajouter la taille de la légende
+    readonly property int yAxisLength: root.yAxisOrigin - root.y
 
     // Propriétés sur les tailles de textes
     property int fontSize: 12
@@ -59,16 +89,8 @@ Item {
 
         // Pour toutes les splines à mettre à jour (toutes, où celle à l'index existant, s'il est valide)
         for (var chartIndex = from ; chartIndex <= to ; chartIndex++) {
-            // Réinitialise la spline
-            charts.itemAt(chartIndex).clear()
-
-            // Rajoute tous les nouveaux points, si ceux-ci existent
-            if (root.datas.length > chartIndex) {
-                for (var pointIndex = 0 ; pointIndex < root.datas[chartIndex].length ; pointIndex++) {
-                    charts.itemAt(chartIndex).addPoint(root.datas[chartIndex][pointIndex][0],
-                                                       root.datas[chartIndex][pointIndex][1])
-                }
-            }
+            // Demande la mise à jour du Canvas
+            charts.itemAt(chartIndex).requestPaint()
         }
     }
 
@@ -82,17 +104,45 @@ Item {
                 values.push(root.datas[splineIndex][pointIndex][0])
             }
         }
-        if (values.length > 0) {
-            root.xMinimum = values.reduce(function (previous, current) {
-                return previous > current ? current : previous;
-            });
-            root.xMaximum = values.reduce(function (previous, current) {
-                return previous < current ? current : previous;
-            });
+        if (values.length > 0 || !root.xDateFormat) {
+            // Si la limite xMinimum doit être changée automatiquement, le change
+            if (root.xMinimumAuto) {
+                var xMin =  values.reduce(function (previous, current) {
+                    return previous > current ? current : previous;
+                }, Math.max(root.xMaximum, root.xMinimum));
+                xAxis.minimum = xMin > root.xMinimum ? xMin : root.xMinimum
+            }
+            else {
+                xAxis.minimum = root.xMinimum
+            }
+
+            // Si la limite xMaximum doit être changée automatiquement, le change
+            if (root.xMaximumAuto) {
+                var xMax = values.reduce(function (previous, current) {
+                    return previous < current ? current : previous;
+                }, Math.min(root.xMinimum, root.xMaximum));
+                xAxis.maximum = xMax < root.xMaximum ? xMax : root.xMaximum
+            }
+            else {
+                xAxis.maximum = root.xMaximum
+            }
         }
         else {
-            root.xMaximum = Date.parse(new Date())
-            root.xMinimum = Date.parse(new Date())
+            // Si la limite xMinimum doit être changée automatiquement, le change
+            if (root.xMinimumAuto) {
+                xAxis.minimum = parseInt(Date.parse(new Date()) / (24 * 60 * 60 * 1000)) * (24 * 60 * 60 * 1000)
+            }
+            else {
+                xAxis.minimum = root.xMinimum
+            }
+
+            // Si la limite xMaximum doit être changée automatiquement, le change
+            if (root.xMaximumAuto) {
+                xAxis.maximum = parseInt(Date.parse(new Date()) / (24 * 60 * 60 * 1000)) * (24 * 60 * 60 * 1000)
+            }
+            else {
+                xAxis.maximum = root.xMaximum
+            }
         }
 
         // Redéfinit la valeur maximale de l'axe y (la valeur minimale sera toujours de 0
@@ -103,9 +153,28 @@ Item {
                 values.push(root.datas[splineIndex][pointIndex][1])
             }
         }
-        root.yMaximum = values.reduce(function (previous, current) {
-            return previous < current ? current : previous;
-        }, 0);
+
+        // Si la limite yMinimum doit être changée automatiquement, le change
+        if (root.yMinimumAuto) {
+            var yMin = values.reduce(function (previous, current) {
+                return previous > current ? current : previous;
+            }, Math.max(root.yMaximum, root.yMinimum));
+            yAxis.minimum = yMin > root.yMinimum ? yMin : root.yMinimum
+        }
+        else {
+            yAxis.maximum = root.yMaximum
+        }
+
+        // Si la limite yMaximum doit être changée automatiquement, le change
+        if (root.yMaximumAuto) {
+            var yMax = values.reduce(function (previous, current) {
+                return previous < current ? current : previous;
+            }, Math.min(root.yMinimum, root.yMaximum));
+            yAxis.maximum = yMax < root.yMaximum ? yMax : root.yMaximum
+        }
+        else {
+            yAxis.maximum = root.yMaximum
+        }
     }
 
     // Détecte lorsque la liste des splines est mise à jour, ajoute un delai avant l'appel et met à jour les limites et les valeurs
@@ -127,6 +196,160 @@ Item {
     }
 
 
+    // Axe X
+    Repeater {
+        id: xAxis
+
+        anchors.fill: parent
+
+        // Propriétés sur les valeurs limites
+        property double minimum: 0.0
+        property double maximum: 0.0
+
+        model: Math.max(root.xTicks, 2)
+
+
+        // Rectangle de démarcation de la ligne
+        Rectangle {
+            id: xLabelsMarker
+
+            // Index du marqueur pour l'utiliser dans les propriétés des enfants
+            readonly property int markerIndex: index
+
+            x: root.xAxisOrigin - root.x + (root.xAxisLength * markerIndex / (Math.max(root.xTicks, 2) - 1))
+            y: root.yAxisOrigin - root.y - root.yAxisLength
+            width: 1 + (markerIndex === 0)
+            height: root.yAxisLength
+
+            color: markerIndex === 0 ? root.textEnabledColor : root.textDisabledColor
+
+
+
+            // Valeur à afficher
+            Text {
+                id: xLabelsText
+
+                // Propriété sur la valeur numérique de l'axe (pour simplifier la lecture
+                readonly property double numeric_value: xAxis.minimum + ((xAxis.maximum - xAxis.minimum) * parent.markerIndex / (Math.max(root.xTicks, 2) - 1))
+
+                anchors.top: parent.bottom
+                anchors.topMargin: root.fontSize / 2
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                text: root.xDateFormat ? `${(new Date(numeric_value)).getUTCDate()}-${(new Date(numeric_value)).getUTCMonth() + 1}-${(new Date(numeric_value)).getUTCFullYear()}`
+                                           : root.to_string(numeric_value, root.xDecimals).toString()
+                color: root.textEnabledColor
+                font.family: "Verdana"
+                font.pixelSize: root.fontSize
+
+                TextMetrics {
+                    id: xLabelsMetrics
+
+                    font: xLabelsText.font
+                    text: xLabelsText.text
+                }
+            }
+        }
+    }
+
+    // Titre de l'axe X
+    Text {
+       id: xTitleText
+
+        x: root.xAxisOrigin - root.x + (root.xAxisLength - xTitleMetrics.boundingRect.width) / 2
+        y: root.yAxisOrigin - root.y + 2 * root.fontSize
+
+        text: root.xTitle
+        color: root.textEnabledColor
+        font.family: "Verdana"
+        font.pixelSize: root.titleFontSize
+
+        TextMetrics {
+            id: xTitleMetrics
+
+            font: xTitleText.font
+            text: xTitleText.text
+        }
+    }
+
+
+    // Axe Y
+    Repeater {
+        id: yAxis
+
+        anchors.fill: parent
+
+        // Propriétés sur les valeurs limites
+        property double minimum: 0.0
+        property double maximum: 0.0
+
+        model: Math.max(root.yTicks, 2)
+
+
+
+        // Rectangle de démarcation de la ligne
+        Rectangle {
+            id: yLabelsMarker
+
+            // Index du marqueur pour l'utiliser dans les propriétés des enfants
+            readonly property int markerIndex: index
+
+            x: root.xAxisOrigin - root.x
+            y: root.yAxisOrigin - root.y - (root.yAxisLength * markerIndex / (Math.max(root.yTicks, 2) - 1))
+            width: root.xAxisLength
+            height: 1 + (markerIndex === 0)
+
+            color: markerIndex === 0 ? root.textEnabledColor : root.textDisabledColor
+
+
+
+            // Valeur à afficher
+            Text {
+                id: yLabelsText
+
+                // Propriété sur la valeur numérique de l'axe (pour simplifier la lecture
+                readonly property double numeric_value: yAxis.minimum + ((yAxis.maximum - yAxis.minimum) * parent.markerIndex / (Math.max(root.yTicks, 2) - 1))
+
+                x: - root.fontSize * 3/2
+                y: + yLabelsMetrics.tightBoundingRect.width
+
+                text: root.yDateFormat ? `${(new Date(numeric_value)).getUTCDate()}-${(new Date(numeric_value)).getUTCMonth() + 1}-${(new Date(numeric_value)).getUTCFullYear()}`
+                                           : root.to_string(numeric_value, root.yDecimals)
+                transform: Rotation { origin.x: 0; origin.y: 0; angle: -90; }
+                color: root.textEnabledColor
+                font.family: "Verdana"
+                font.pixelSize: root.fontSize
+
+                TextMetrics {
+                    id: yLabelsMetrics
+
+                    font: yLabelsText.font
+                    text: yLabelsText.text
+                }
+            }
+        }
+    }
+
+    // Titre de l'axe Y
+    Text {
+       id: yTitleText
+
+        x: root.xAxisOrigin - root.x - 2 * root.fontSize - root.titleFontSize
+        y: root.yAxisOrigin - root.y - (root.yAxisLength - yTitleMetrics.boundingRect.width) / 2
+
+        text: root.yTitle
+        transform: Rotation { origin.x: 0; origin.y: 0; angle: -90; }
+        color: root.textEnabledColor
+        font.family: "Verdana"
+        font.pixelSize: root.titleFontSize
+
+        TextMetrics {
+            id: yTitleMetrics
+
+            font: yTitleText.font
+            text: yTitleText.text
+        }
+    }
 
     // Repeater pour afficher toutes les splines
     Repeater {
@@ -135,120 +358,49 @@ Item {
         anchors.fill: parent
 
         // Autant de graphiques qu'il y a de courbes à afficher
-        model: Math.min(root.datas.length, root.names.length, root.colors.length)
+        model: Math.min(root.datas.length, root.names.length, root.colors.length, root.widths.length)
 
-        // ChartView permettant d'afficher la structure du ghraphe
-        ChartView {
-            // Propriété permettant de connaitre l'index du graphique
-            readonly property int splineIndex: index
+        Canvas {
+            id: chart
 
+            // Propriété sur l'index du graphique
+            readonly property int chartIndex: index
 
-            // Fonctions permettant de rajouter et d'enlever des points à la SplineSeries
-            // Il est impossible pour la fonction updateValues de récupérer la spline
-            function clear() { spline.removePoints(0, spline.count) }
-            function addPoint(x, y) { spline.append(x, y) }
+            x: root.xAxisOrigin - root.x
+            y: root.yAxisOrigin - root.y - root.yAxisLength
+            width: root.xAxisLength
+            height: root.yAxisLength
 
-            // Légende redéfinie manuellement
-            legend.visible: false
+            onPaint: {
+                var ctx = getContext("2d");
+                ctx.reset();
+                ctx.beginPath();
 
-            // Fait que le composant prenne la taille indiquée (en laissant 32px de marge en bas et à gauche pour les axes)
-            anchors.fill: parent
-            anchors.bottomMargin: 50                // Laisse assez d'espace pour la légende
-            plotAreaColor: "transparent"
-            backgroundColor: "transparent"
+                // Défini l'épaisseur et la couleur de remplissage de la ligne
+                ctx.lineWidth = root.widths[chartIndex];
+                ctx.lineCap = "round";
+                ctx.strokeStyle = root.colors[chartIndex]
 
-            // Enlève les bordures pour éviter à certaines valeurs de disparaitre
-            margins.top: 0
-            margins.bottom: 0
-            margins.left: 0
-            margins.right: 0
-
-            // Active l'antialiasing pour un bon rendu même en petites dimensions
-            antialiasing: true
-
-
-
-            // SplineSeries pour tracer la courbe
-            LineSeries {
-                id: spline
-
-                // La répétition de point et de SplineSeries est impossible (car ce sont des delegates et non des objets)
-                // Ceci devront être rajoutés avec l'appel de la fonction updatevalues()
-
-                // Couleur de la courbe (dépend des couleurs envoyées)
-                color: root.colors[splineIndex]
-
-                // Définit les axes, selon l'index
-                axisX: ValueAxis {
-                    // Les valeurs minimales et maximales sont redéfinies lors de la mise à jour des données
-                    min: root.xMinimum
-                    max: root.xMaximum
-
-                    color: root.textEnabledColor
-                    gridLineColor: root.textDisabledColor
-                    gridVisible: true
-                    lineVisible: true
-                    tickCount: Math.max(root.xTicks, 2)
-                    minorTickCount: Math.max(root.xMinorTicks, 0)
-
-                    labelsColor: root.textEnabledColor
-                    minorGridLineColor: root.textDisabledColor
-                    labelFormat: `%.${root.xDecimals}f`
-                    labelsVisible: !root.xAxisDateFormat
-
-                    titleText: `<font color='${root.textEnabledColor}'>${root.xTitle}</font>`
-                    titleFont.pixelSize: root.titleFontSize
-                    titleVisible: true
+                // Dessine toutes les sections de lignes
+                if (root.datas[chartIndex].length > 0) {
+                    ctx.moveTo(root.xAxisLength * (root.datas[chartIndex][0][0] - xAxis.minimum) / Math.max((xAxis.maximum - xAxis.minimum), 1),     // Math.min pour éviter les divisions par 0 si aucune valeur
+                               root.yAxisLength - (root.yAxisLength * (root.datas[chartIndex][0][1] - yAxis.minimum) / Math.max((yAxis.maximum - yAxis.minimum), 1)))
+                }
+                for (var pointIndex = 1 ; pointIndex < root.datas[chartIndex].length ; pointIndex++) {
+                    ctx.lineTo(root.xAxisLength * (root.datas[chartIndex][pointIndex][0] - xAxis.minimum) / Math.max((xAxis.maximum - xAxis.minimum), 1),
+                               root.yAxisLength - (root.yAxisLength * (root.datas[chartIndex][pointIndex][1] - yAxis.minimum) / Math.max((yAxis.maximum - yAxis.minimum), 1)))
                 }
 
-                axisY: ValueAxis {
-                    // Les valeurs minimales et maximales sont redéfinies lors de la mise à jour des données
-                    min: root.yMinimum
-                    max: root.yMaximum
-
-                    color: root.textEnabledColor
-                    gridLineColor: root.textDisabledColor
-                    gridVisible: true
-                    lineVisible: true
-                    tickCount: Math.max(root.yTicks, 2)
-                    minorTickCount: Math.max(root.yMinorTicks, 0)
-                    labelsVisible: true
-
-                    labelsColor: root.textEnabledColor
-                    minorGridLineColor: root.textDisabledColor
-                    labelFormat: `%.${root.yDecimals}f`
-
-                    titleText: `<font color='${root.textEnabledColor}'>${root.yTitle}</font>`
-                    titleFont.pixelSize: root.titleFontSize
-                    titleVisible: true
-                }
+                // Ferme le chemin
+                ctx.stroke();
             }
         }
+
     }
 
     // Fais une première update de toutes les splines pour les montrer une fois le composant chargé
     Component.onCompleted: {root.updateLimits(); root.updateValues(-1) }
 
-
-    // Repeater pour afficher les dates, si l'utilisateur préfère afficher les axes des X comme dates
-    Repeater {
-        id: xAxisDate
-
-        model: Math.max(root.xTicks, 2)
-
-        Text {
-            x: root.x + 40 +  3 * root.fontSize + (root.width - 40 - 3 * root.fontSize) * index / (Math.max(root.xTicks, 2) - 1) - 30
-            y: root.y + root.height - 3 * root.fontSize - 40 - 5
-
-            readonly property var date: new Date(parseInt(root.xMinimum + index / (Math.max(root.xTicks, 2) - 1) * (root.xMaximum - root.xMinimum)))
-            text: `${date.getUTCDate()}-${date.getUTCMonth() + 1}-${date.getUTCFullYear()}`
-
-            color: root.textEnabledColor
-            font.pixelSize: root.fontSize
-            font.family: "Verdana"
-            visible: root.xAxisDateFormat
-        }
-    }
 
     Repeater {
         id: legend
