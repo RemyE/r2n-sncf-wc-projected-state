@@ -138,24 +138,36 @@ Item {
             id: operationChart
 
             anchors.fill: parent
-            anchors.rightMargin: 30
+            anchors.bottomMargin: fontSize
+            anchors.leftMargin: fontSize
+            anchors.topMargin: 1.5 * fontSize
+            anchors.rightMargin: 3 * fontSize
 
             xTitle: "Date de la marche"
+            xMinimumAuto: true
+            xMinimum: (parseInt(Date.parse(new Date()) / (24 * 60 * 60 * 1000))
+                       - (root.visiblePeriod == "year" ? 365 : root.visiblePeriod == "month" ? 30 : root.visiblePeriod == "week" ? 7 : parseInt(Date.parse(new Date())  / 24 / 60 / 60 / 1000)))
+                       * (24 * 60 * 60 * 1000)
+            xMaximumAuto: false
+            xMaximum: parseInt(Date.parse(new Date()) / (24 * 60 * 60 * 1000)) * (24 * 60 * 60 * 1000)
             xDecimals: 0
             xTicks: 4
-            xMinorTicks: 0
+            xDateFormat: true
 
-            yTitle: "Consommation et remplissage des réservoirs d'eau (minimum, moyen, maximum)"
+            yTitle: "Delta de remplissage des réservoirs d'eau"
+            yMinimumAuto: false
+            yMinimum: 0
+            yMaximumAuto: true
+            yMaximum: 100
             yDecimals: 2
             yTicks: 4
-            yMinorTicks: 2
+            yDateFormat: false
 
             // Données définies par la fonction de mise à jour
             names: ["Consommation eau claire (minimum)", "Consommation eau claire (moyenne)", "Consommation eau claire (maximum)",
-                    "Remplissage eau sale (minimum)", "Remplissage eau sale (moyenne)", "Remplissage eau salle (maximum)"]
+                    "Remplissage eau sale (minimum)", "Remplissage eau sale (moyenne)", "Remplissage eau sale (maximum)"]
             colors: ["#ADD8E6", "#6495ED", "#0000FF", "#DEB887", "#DAA520", "#A0522D"]
-
-            xAxisDateFormat: true
+            widths: [1, 2, 1, 1, 2, 1]
         }
 
         // Row Layout pour sélectionner le temps à afficher
