@@ -11,8 +11,8 @@ Item {
     readonly property bool valid: root.cleanWaterData.length !== 0 && root.poopooWaterData.length !== 0
 
     // Propriété sur les valeurs
-    property var operations: []                 // Liste des opérations ayant des données. Défini à l'initialisation
-    property var selections: [""]               // liste des sélections de missions
+    property var operations: []                     // Liste des opérations ayant des données. Défini à l'initialisation
+    property var selections: [""]                   // liste des sélections de operations
     onSelectionsChanged: root.dataChanged()
     readonly property int defaultCleanWaterBaseLevel: 135
     readonly property int cleanWaterBaseLevel: cleanInput.value   // Remplissage par défaut du réservoir d'eau propre
@@ -22,11 +22,13 @@ Item {
     property int defaultPoopooWaterBaseLevel: 315.0 // Remplissage limite du réservoir d'eau sale
     property int poopooWaterBaseLevel: poopooInput.value          // Remplissage limite du réservoir d'eau sale
     onPoopooWaterBaseLevelChanged: root.updateValues()
-    property var names: ["opération 1"]         // Liste des noms des opérations
-    property var cleanWaterData: []             // format [[min, avg, max], ...]
-    property var cumCleanWaterData: []          // format [[min, avg, max], ...] -> Format SplineSeries
-    property var poopooWaterData: []            // format [[min, avg, max], ...]
-    property var cumPoopooWaterData: []         // format [[min, avg, max], ...] -> Format SplineSeries
+    property int poopooWaterWarningIndex: 0         // Index à partir duquel le niveau du réservoir d'eau sale est problématique ou critique
+    property int poopooWaterCriticalIndex: 0
+    property var names: ["opération 1"]             // Liste des noms des opérations
+    property var cleanWaterData: []                 // format [[min, avg, max], ...]
+    property var cumCleanWaterData: []              // format [[min, avg, max], ...] -> Format SplineSeries
+    property var poopooWaterData: []                // format [[min, avg, max], ...]
+    property var cumPoopooWaterData: []             // format [[min, avg, max], ...] -> Format SplineSeries
 
     // Signaux à redéfinir en QML ou en Python
     signal dataChanged()            // Appelé lorsqu'une sélection a été modifiée, ajoutée ou supprimée
@@ -202,6 +204,11 @@ Item {
 
                 title: root.names[index]
                 elements: root.operations
+
+                critical: [root.cleanWaterCriticalIndex <= index,
+                           root.poopooWaterCriticalIndex <= index]
+                warning: [root.cleanWaterWarningIndex <= index,
+                          root.poopooWaterWarningIndex <= index]
 
                 enabled: root.valid
                 add: root.valid
