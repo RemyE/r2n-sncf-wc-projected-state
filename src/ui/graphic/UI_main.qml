@@ -17,7 +17,7 @@ Item {
     property string borderColor: "#949494"
 
 
-    // Signaux à surchager en QML ou en Python
+    // Signaux à surcharger en QML ou en Python
     signal operationClicked(string text)
 
 
