@@ -56,10 +56,10 @@ class UIoperation:
 
     def save(self) -> None:
         """Formate les données actuellement affichées et les sauvegardes."""
-        # Récupère le nom/numéro de mission
+        # Récupère le nom/numéro de l'opération
         operation = self.__component.property("operationName")
 
-        # Enregistre le fichier avec les informations, en supprimant la colonne du nom de mission
+        # Enregistre le fichier avec les informations, en supprimant la colonne du nom de l'opération
         datas = self.__app.database.operation_database(operation)
         datas = datas[datas.columns[~datas.columns.isin(['unknown_IMISSIONTRAINNUMBER'])]]
         datas.to_csv(f"{UIoperation.output_folder_path}\\{operation}.csv")
