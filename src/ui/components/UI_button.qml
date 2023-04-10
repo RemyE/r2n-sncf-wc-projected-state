@@ -33,7 +33,7 @@ Item {
     // Chemin d'accès vers les icones utiles pour le UI_button
     readonly property string symbols_path: "../assets/"
 
-    // Signaux à surchager en QML ou en Python
+    // Signaux à surcharger en QML ou en Python
     signal clicked()                // Appelé lorsque le bouton est relaché
     signal doubleClicked()          // Appelé lorsque le bouton est double cliqué
     signal pressed()                // Appelé lorsque le bouton commenceà être pressé

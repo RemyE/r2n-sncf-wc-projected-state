@@ -32,7 +32,7 @@ Item {
     property string highlightColor: "#FFB5FE"
 
 
-    // Signauxw à surcherger en QML ou en Python
+    // Signaux à surcharger en QML ou en Python
     signal leftAdd()    // Appelé lorsque le bouton pour ajouter une opération à gauche est cliqué
     signal rightAdd()   // Appelé lorsque le bouton pour ajouter une opération à droite est cliqué
     signal removed()     // Appelé lorsque le bouton pour cliquer

@@ -21,7 +21,7 @@ Item {
     property string source: ""
     property string path: "../assets/"
 
-    // Propriété sur le nom de la mission
+    // Propriété sur le nom de l'opération'
     property int fontSize: 12
     property string name: ""
 
@@ -34,7 +34,7 @@ Item {
     property string textDisabledColor: "#C8C8C8"
     property string highlightColor: "#FFB5FE"
 
-    // Signaux à surchager en QML ou en Python
+    // Signaux à surcharger en QML ou en Python
     signal clicked(string text)
 
 
