@@ -43,7 +43,7 @@ Item {
     property string highlightColor: "#FFB5FE"
 
     // Fonction pour transformer un nombre au bon format et au bon nombre de décimales en écriture non-scientifique
-    function toString(number, decimals) {
+    function to_string(number, decimals) {
         var fixed = number.toFixed(decimals)                        // Fixe le nombre pour ne pas qu'il soit en notation scientifique
         return fixed.includes(".") ? fixed.replace(/\.?0+$/, "")    // Si le nombre contient un point (décimales)     -> S'assure qu'il n'y a pas de 0 inutiles (12.300 -> 12.3)
                                    : fixed                          // Si le nombre ne contient pas de point (entier) -> Retourne le nombre n'étant pas en écriture scientifique
