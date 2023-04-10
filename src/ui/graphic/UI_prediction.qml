@@ -14,9 +14,13 @@ Item {
     property var operations: []                 // Liste des opérations ayant des données. Défini à l'initialisation
     property var selections: [""]               // liste des sélections de missions
     onSelectionsChanged: root.dataChanged()
-    property double cleanWaterBaseLevel: 0.0    // Remplissage par défaut du réservoir d'eau propre
+    readonly property int defaultCleanWaterBaseLevel: 135
+    readonly property int cleanWaterBaseLevel: cleanInput.value   // Remplissage par défaut du réservoir d'eau propre
     onCleanWaterBaseLevelChanged: root.updateValues()
-    property double poopooWaterBaseLevel: 0.0   // Remplissage limite du réservoir d'eau sale
+    property int cleanWaterWarningIndex: 0          // Index à partir duquel le niveau de réservoir d'eau claire est problématique ou critique
+    property int cleanWaterCriticalIndex: 0
+    property int defaultPoopooWaterBaseLevel: 315.0 // Remplissage limite du réservoir d'eau sale
+    property int poopooWaterBaseLevel: poopooInput.value          // Remplissage limite du réservoir d'eau sale
     onPoopooWaterBaseLevelChanged: root.updateValues()
     property var names: ["opération 1"]         // Liste des noms des opérations
     property var cleanWaterData: []             // format [[min, avg, max], ...]
@@ -104,13 +108,67 @@ Item {
     }
 
 
-    // Rectangle pour la structure de visualisation, de sélection et d'ajout des missions
-        Rectangle {
-        id: selectorBody
+    // Rectangle pour les entrées de valeurs
+    Rectangle {
+        id: baseBody
 
         anchors.top:  returnButton.bottom
         anchors.topMargin: returnButton.anchors.topMargin
         anchors.left: returnButton.left
+        width: 150
+        z: selectorBody.z + 1           // Met le composant au dessus de l'onglet de sélection pour ne pas être caché par les opérations
+
+        height: returnButton.height * 2 + 20
+        border.width: 3 * returnButton.borderWidth
+
+        color: returnButton.backgroundColor
+        border.color: returnButton.textEnabledColor
+
+
+        UI_integerinput {
+            id: cleanInput
+
+            anchors.left: parent.left
+            anchors.leftMargin: parent.border.width
+            anchors.right: parent.right
+            anchors.rightMargin: parent.border.width
+            anchors.top: parent.top
+            anchors.topMargin: parent.border.width
+            anchors.bottom: parent.verticalCenter
+
+            placeholderText: "Limite réservoir eau propre"
+
+            minimum: 0
+            maximum: 1000
+            Component.onCompleted: cleanInput.change_value(root.defaultCleanWaterBaseLevel)
+        }
+
+        UI_integerinput {
+            id: poopooInput
+
+            anchors.left: parent.left
+            anchors.leftMargin: parent.border.width
+            anchors.right: parent.right
+            anchors.rightMargin: parent.border.width
+            anchors.top: parent.verticalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: parent.border.width
+
+            placeholderText: "Limite réservoir eau sale"
+
+            minimum: 0
+            maximum: 1000
+            Component.onCompleted: poopooInput.change_value(root.defaultPoopooWaterBaseLevel)
+        }
+    }
+
+    // Rectangle pour la structure de visualisation, de sélection et d'ajout des operations
+    Rectangle {
+        id: selectorBody
+
+        anchors.top:  returnButton.bottom
+        anchors.topMargin: returnButton.anchors.topMargin
+        anchors.left: baseBody.right
         anchors.right: saveButton.right
         height: returnButton.height * 2 + 20
         border.width: 3 * returnButton.borderWidth
