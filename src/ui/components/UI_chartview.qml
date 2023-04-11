@@ -59,7 +59,7 @@ Item {
     property bool yDateFormat: false
     onYDateFormatChanged: root.updateLimits()
 
-    readonly property int yAxisOrigin: root.y + root.height - (root.titleFontSize * (root.yTitle !== "") + 2 * root.fontSize)   // TODO : ajouter la taille de la légende
+    readonly property int yAxisOrigin: root.y + root.height - (root.titleFontSize * (root.yTitle !== "") + 2 * root.fontSize + 2 * legend.rowsCount * root.fontSize)
     readonly property int yAxisLength: root.yAxisOrigin - root.y
 
     // Propriétés sur les tailles de textes
@@ -405,13 +405,31 @@ Item {
     Repeater {
         id: legend
 
+        // Propriétés sur les dimensions de la légende
+        property int longestLegendLength: 0
+        readonly property int columnsCount: Math.max(root.xAxisLength / parseInt(legend.longestLegendLength + 4 * root.fontSize), 1)
+        readonly property int rowsCount: Math.max(parseInt(0.99 + (legend.count / legend.columnsCount)), 0)
+
         model: Math.min(root.names.length, root.colors.length)
 
 
+        // Signal appelé lorsque le nombre d'éléments change
+        onCountChanged: {
+            // Passe sur chacun des textes et récupère la longueur du texte le plus long et l'indique
+            var longest = 0
+            for (var legendIndex = 0 ; legendIndex < legend.count ; legendIndex++) {
+                longest = longest > legend.itemAt(legendIndex).textWidth ? longest : legend.itemAt(legendIndex).textWidth
+            }
+            legend.longestLegendLength = longest
+        }
+
         Item {
+            // Propriété sur la largeur du texte de la légende
+            readonly property int textWidth: legendMetrics.tightBoundingRect.width
+
             Rectangle {
-                x: root.x + 300 * (index % 3) + 40
-                y: root.y + root.height + root.fontSize * 2 * parseInt(index / 3) - 40 - 15
+                x: root.xAxisOrigin + (legend.longestLegendLength + 4 * root.fontSize) * (index % legend.columnsCount)
+                y: root.yAxisOrigin + 2 * root.fontSize * (1.5 + parseInt(index / legend.columnsCount))
                 width: root.fontSize
                 height: root.fontSize
 
@@ -421,13 +439,24 @@ Item {
             }
 
             Text {
-                x: root.x + 300 * (index % 3) + 2 * root.fontSize + 40
-                y: root.y + root.height + root.fontSize * 2 * parseInt(index / 3) - 40 - 15
+                id: legendText
+
+                x: root.xAxisOrigin + 2 * root.fontSize + (legend.longestLegendLength + 4 * root.fontSize) * (index % legend.columnsCount)
+                y: root.yAxisOrigin + 2 * root.fontSize * (1.5 + parseInt(index / legend.columnsCount))
                 width: root.fontSize
                 height: root.fontSize
 
                 text: root.names[index]
                 color: index < root.datas.length ? root.textEnabledColor : root.textDisabledColor
+
+
+
+                TextMetrics {
+                    id: legendMetrics
+
+                    font: legendText.font
+                    text: legendText.text
+                }
             }
         }
     }
