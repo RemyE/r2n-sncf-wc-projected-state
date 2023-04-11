@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 
 # Librairies graphiques
+import pandas
 from PySide6.QtCore import QObject
 from PySide6.QtQml import QJSValue
 
@@ -21,6 +22,8 @@ class UIprediction:
     # fenêtre pour accéder aux autres pages
     __app: "UIapp" = None
     __component: QObject = None
+
+    output_folder_path: str = f"{PROJECT_DIR}output\\prediction"
 
     def __init__(self, ui_app):
         """Initialise la page des rames
@@ -59,4 +62,44 @@ class UIprediction:
 
     def save(self) -> None:
         """Formate les données actuellement affichées et les sauvegardes."""
-        pass        # TODO : ùme définir
+        # Récupère les différentres listes nécessaires (Nom des opérations, valeurs et valeurs cumulées)
+        operations = self.__component.property("selections")
+        if isinstance(operations, QJSValue):
+            operations = operations.toVariant()
+        clean = self.__component.property("cleanWaterData")
+        if isinstance(clean, QJSValue):
+            clean = clean.toVariant()
+        clean_cum = self.__component.property("cumCleanWaterData")
+        if isinstance(clean_cum, QJSValue):
+            clean_cum = clean_cum.toVariant()
+        poopoo = self.__component.property("poopooWaterData")
+        if isinstance(poopoo, QJSValue):
+            poopoo = poopoo.toVariant()
+        poopoo_cum = self.__component.property("cumPoopooWaterData")
+        if isinstance(poopoo_cum, QJSValue):
+            poopoo_cum = poopoo_cum.toVariant()
+
+        # Crée le DataFramev avec les missions et les différentes données
+        datas = pandas.DataFrame({"operation": [""] + operations,
+                                  "cleanMin": ["0.000"] + [f"{c_value[0]:.3f}" for c_value in clean],
+                                  "cleanMoy": ["0.000"] + [f"{c_value[1]:.3f}" for c_value in clean],
+                                  "cleanMax": ["0.000"] + [f"{c_value[2]:.3f}" for c_value in clean],
+                                  "cleanCumMin": [f"{cc_value[0]:.3f}" for cc_value in clean_cum],
+                                  "cleanCumMoy": [f"{cc_value[1]:.3f}" for cc_value in clean_cum],
+                                  "cleanCumMax": [f"{cc_value[2]:.3f}" for cc_value in clean_cum],
+                                  "dirtyMin": ["0.000"] + [f"{p_value[0]:.3f}" for p_value in poopoo],
+                                  "dirtyMoy": ["0.000"] + [f"{p_value[1]:.3f}" for p_value in poopoo],
+                                  "dirtyMax": ["0.000"] + [f"{p_value[2]:.3f}" for p_value in poopoo],
+                                  "dirtyCumMin": [f"{pc_value[0]:.3f}" for pc_value in poopoo_cum],
+                                  "dirtyCumMoy": [f"{pc_value[1]:.3f}" for pc_value in poopoo_cum],
+                                  "dirtyCumMax": [f"{pc_value[2]:.3f}" for pc_value in poopoo_cum]})
+
+        # Enregistre sous format de csv et txt
+        new_index = 0
+        while os.path.isfile(f"{UIprediction.output_folder_path}\\{new_index}.csv") \
+                or os.path.isfile(f"{UIprediction.output_folder_path}\\{new_index}.txt"):
+            new_index += 1
+
+        datas.to_csv(f"{UIprediction.output_folder_path}\\{new_index}.csv")
+        with open(f"{UIprediction.output_folder_path}\\{new_index}.txt", "w") as file:
+            file.write(datas.to_string())
