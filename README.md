@@ -21,6 +21,11 @@ You have to:
 <train_id[z55xxxxx]>_<date[yyyymmdd]>_<time[hhmmss]>_<data_folder_id(from 0 to n)>`, eg: `z5500503_20221107_131914_0`
 ```
 5. Launch the software and see for merged folders (only feature available at the moment) in `project_root\Data\Parquet\Edited`
+6. You will see an error like `Constants.USER = line.split(": ")[1].strip()` in your console. This error is normal. You need to configure the conenction informations of the postgreSQL database. To do that:
+   - Find the repository of the `r2n-sncf-wc-projected-state` project and go to his parent folder
+   - You will find a text file named `Configuration postgreSQL`. Open it and fill in the informations. Then save it
+   - Relaunch the software
+     - If one ore more information is incorrect you will see an error with the `cursor`. See logs for details
 
 ## Tips
 Launch the software from a terminal to ensure the visualization of data processing progress bars, via
