@@ -40,7 +40,7 @@ class Database:
         # Si aucun fichier n'a correctement été trouvé, jette une erreur
         if self.__database.empty:
             raise FileNotFoundError(f"Aucun fichier de données pickle (.pkl) dans : \"{Database.data_folder_path}\".")
-        print(self.__database.to_string())
+
         # Trie la BDD pour mettre les colonnes par ordre de marche
         self.__database.sort_values(["jour", "unknown_IMISSIONTRAINNUMBER"]).reset_index(drop=True)
         self.__database = self.__database.astype({"unknown_IMISSIONTRAINNUMBER": "string", "jour": "string",
