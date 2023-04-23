@@ -26,10 +26,10 @@ class Constants:
 
     def __init__(self):
         # Lecture des identifiants de connexion dans le fichier texte
-        file_path = "../Configuration postgreSQL.txt"
+        file_path = "../../Configuration postgreSQL.txt"
         if not os.path.exists(file_path):
             with open(file_path, "w") as f:
-                f.write("Ceci est le fichier de paramétrage d'accès la base de données PostgreSQL. Veuillez saisir vos informations de connexion :\nIdentifiant :\nMot de passe :\nHôte :\nPort :\nNom de la base de données : ")
+                f.write("Ceci est le fichier de paramétrage d'accès la base de données PostgreSQL.\n\nATTENTION : la base de données par défaut est \"postgres\". Sans configuration préalable de postgreSQL, c'est cette base de données qu'il faut utiliser.\n\nVeuillez saisir vos informations de connexion :\nIdentifiant :\nMot de passe :\nHôte :\nPort :\nNom de la base de données : ")
 
         with open(file_path, "r") as f:
             lines = f.readlines()
@@ -47,23 +47,16 @@ class Constants:
                 Constants.DATABASE = line.split(": ")[1].strip() if line.split(":")[1].strip() else Constants.DATABASE
 
     def get_db_user(self):
-        print("\n",Constants.USER,"\n")
         return Constants.USER
     
     def get_db_password(self):
-        print("\n",Constants.PASSWORD,"\n")
         return Constants.PASSWORD
     
     def get_db_host(self):
-        print("\n",Constants.HOST,"\n")
         return Constants.HOST
     
     def get_db_port(self):
-        print("\n",Constants.PORT,"\n")
         return Constants.PORT
     
     def get_db_database(self):
-        print("\n",Constants.DATABASE,"\n")
         return Constants.DATABASE
-
-
