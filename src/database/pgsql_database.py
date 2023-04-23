@@ -32,17 +32,20 @@ class Database:
         # Logging
         self.__logger = log.getLogger("Database")
 
+        # Accès aux constantes
+        cons = Constants()
+
         # CHEMINS D'ACCÈS
         self.__paths = Paths()
         # Chemin d'accès du dossier "Database_extracted_table" de stockage des tables de la BDD
         self.__database_extracted_table_path = self.__paths.get_path("Database_extracted_table")
 
         # Initialisation des paramètres de connexion
-        self.database = Constants.DATABASE
-        self.user = Constants.USER
-        self.password = Constants.PASSWORD
-        self.host = Constants.HOST
-        self.port = Constants.PORT
+        self.database = cons.get_db_database()
+        self.user = cons.get_db_user()
+        self.password = cons.get_db_password()
+        self.host = cons.get_db_host()
+        self.port = cons.get_db_port()
         self.conn = None
 
         # Connexion à la base de données si autoconnect est True
