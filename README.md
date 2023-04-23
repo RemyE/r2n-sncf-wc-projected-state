@@ -4,9 +4,9 @@ The purpose of this project is to estimate the water consumption needs of toilet
 Knowing the water needs, we can forecast refueling needs more accurately and limit the immobilization of the trains due to lack of water.
 
 ## Libraries install
-You must install the pandas, progress and pyarrow libraries
+You must install the numpy, pandas, progress, pyarrow, python-dateutil, pytz, six and PySide6 libraries.
 ```
-pip install pandas progress pyarrow
+python -m pip install numpy>=1.23.4 pandas>=1.5.1 progress>=1.6 pyarrow>=10.0.0 python-dateutil>=2.8.2 pytz>=2022.6 six>=1.16.0 PySide6~=6.4.2
 ```
 
 ## Setup
