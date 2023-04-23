@@ -281,3 +281,25 @@ class Database:
             cur.close()
         else:
             self.__logger.warning("Please connect to the database first.")
+
+    def fetch_data_from_table(self, table_name):
+        """
+        Récupère les données de la table spécifiée
+        :param table_name: Nom de la table dont les données doivent être récupérées
+        :return: Liste de dictionnaires contenant les données de la table
+        """
+        if self.conn is not None:
+            cur = self.conn.cursor()
+            try:
+                cur.execute(f"SELECT * FROM {table_name}")
+                rows = cur.fetchall()
+                column_names = [desc[0] for desc in cur.description]
+                data = [dict(zip(column_names, row)) for row in rows]
+                return data
+            except psycopg2.Error as e:
+                self.__logger.error(f"Error fetching data from table {table_name}: {e}")
+            finally:
+                cur.close()
+        else:
+            self.__logger.warning("Please connect to the database first.")
+
