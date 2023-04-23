@@ -2,7 +2,7 @@
 # Nom du fichier : Paths.py
 # Description du fichier : classe "Paths". Gère l'ensemble des chemins d'accès au projet
 # Date de création : 14/11/2022
-# Date de mise à jour : 15/11/2022
+# Date de mise à jour : 23/04/2022
 # Créé par : Rémy EVRARD
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -25,11 +25,11 @@ from core.paths.ProjectRootPath import ProjectRootPath
 
 class Paths:
     """
-    Gère l'ensemble des chemins d'accès du projet, dossiers et fichiers
+    La classe Paths gère l'ensemble des chemins d'accès du projet, dossiers et fichiers.
     """
 
     def __init__(self):
-        # Logging
+        # Initialisation du logger
         self.__logger = log.getLogger("Paths")
 
         # Chemin d'accès au projet
@@ -56,9 +56,9 @@ class Paths:
 
     def __set_paths(self):
         """
-        Défini les chemins d'accès des dossiers initiaux, sans les dossiers de parquet
+        Définit les chemins d'accès des dossiers initiaux, sans les dossiers de parquet.
+        Initialise les chemins d'accès aux différents niveaux de l'arborescence du projet.
         """
-
         """DOSSIERS"""
         """Niveau 0"""
         # Dossier source du travail
@@ -115,7 +115,7 @@ class Paths:
 
     def __make_directories(self):
         """
-        Créé les dossiers de l'arborescence s'ils n'existent pas
+        Crée les dossiers de l'arborescence s'ils n'existent pas.
         """
 
         # On créé les dossiers avec le niveau le plus faible ; les dossiers parents se créent automatiquement
@@ -135,23 +135,24 @@ class Paths:
 
     def __set_source_parquet(self):
         """
-        Liste l'ensemble des dossiers parquet source dans une liste triée alphabétiquement
+        Liste l'ensemble des dossiers parquet source dans une liste triée alphabétiquement.
         """
 
         self.__source_parquet = sorted(os.listdir(self.__paths["Source_3"]))
 
     def __set_edited_parquet(self):
         """
-        Liste l'ensemble des dossiers parquet édités dans une liste triée alphabétiquement
+        Liste l'ensemble des dossiers parquet édités dans une liste triée alphabétiquement.
         """
 
         self.__edited_parquet = sorted(os.listdir(self.__paths["Edited_3"]))
 
     def get_source_parquet(self, need_refresh=True):
         """
-        Retourne la liste des dossiers parquet source
-        :param need_refresh: indique si un rafraichissement de la liste est souhaité. Vrai par défaut
-        :return: self.__source_parquet: liste des dossiers parquet source
+        Retourne la liste des dossiers parquet source.
+        
+        :param need_refresh: booléen, indique si un rafraîchissement de la liste est souhaité. Vrai par défaut.
+        :return: list, liste des dossiers parquet source.
         """
 
         # Si un rafraichissement de la liste est demandé
@@ -162,9 +163,10 @@ class Paths:
 
     def get_edited_parquet(self, need_refresh=True):
         """
-        Retourne la liste des dossiers parquet édités
-        :param need_refresh: indique si un rafraichissement de la liste est souhaité. Vrai par défaut
-        :return: self.__source_parquet: liste des dossiers parquet édités
+        Retourne la liste des dossiers parquet édités.
+        
+        :param need_refresh: booléen, indique si un rafraîchissement de la liste est souhaité. Vrai par défaut.
+        :return: list, liste des dossiers parquet édités.
         """
 
         if need_refresh:
@@ -175,11 +177,12 @@ class Paths:
     def get_path(self, desired_path):
         """
         Renvoie un chemin d'accès en spécifiant toute ou partie du nom de dossier en paramètre (exemple : "Ed" pour le
-        chemin d'accès du dossier "Edited"
+        chemin d'accès du dossier "Edited").
         Attention, fonctionne seulement si tous les noms de dossier du projet sont indépendants. Autrement, il faut
-        passer explicitement la clef du dictionnaire comprenant le niveau du dossier (exemple : "Edited_3")
-        :param desired_path: nom du répertoire
-        :return: self.__paths[key]: chemin d'accès du répertoire
+        passer explicitement la clef du dictionnaire comprenant le niveau du dossier (exemple : "Edited_3").
+        
+        :param desired_path: str, nom du répertoire.
+        :return: Path, chemin d'accès du répertoire.
         """
 
         # Indique si un chemin d'accès a été trouvé
@@ -193,20 +196,20 @@ class Paths:
         # Si la clef n'a pas été trouvé, il y a erreur
         if not path_found:
             self.__logger.error(
-                "Could not match input key \'%s\' with avaliable paths to find any path. Check function parameter for "
-                "missmatching searched path" % (
+                "Could not match input key \'%s\' with available paths to find any path. Check function parameter for "
+                "mismatching searched path" % (
                     desired_path))
             raise KeyError
 
     @staticmethod
     def get_parquet_folder_information(folder):
         """
-        Décompose le nom d'un dossier parquet pour en extraire des informations sous forme d'un dictionnaire
-        :param folder: dossier parquet dont les informations sont à récupérer
-        :return: folder_description: description du dossier parquet
+        Décompose le nom d'un dossier parquet pour en extraire des informations sous forme d'un dictionnaire.
+        
+        :param folder: str, dossier parquet dont les informations sont à récupérer.
+        :return: dict, description du dossier parquet.
         """
 
-        # Todo : vérifier de part sa structure qu'il s'agit bien d'un dossier parquet qui est analysé
         # Stocke les informations du fichier sous forme
         # [trainId: value, date: value, time: value, splitId: value, file_name: value]
         folder_description = dict(
@@ -217,8 +220,9 @@ class Paths:
 
     def __hide_folder(self, path):
         """
-        Masque un dossier au chemin d'accès spécifié
-        :param path: chemin d'accès du dossier
+        Masque un dossier au chemin d'accès spécifié.
+        
+        :param path: Path, chemin d'accès du dossier.
         """
 
         # Récupération de l'OS
@@ -231,21 +235,23 @@ class Paths:
                 call(["chflags", "hidden", path])
 
         else:
-            self.__logger.warning("Unable to hide folder under path \'%s\'. Unknow operating system. Only Windows and "
+            self.__logger.warning("Unable to hide folder under path \'%s\'. Unknown operating system. Only Windows and "
                                   "Darwin [Mac] are supported" % path)
 
     def get_source_folder_list(self):
         """
-        Liste les dossiers présents dans le dossier Source
-        :return: os.listdir(self.get_path("Source")): liste des dossiers
+        Liste les dossiers présents dans le dossier Source.
+        
+        :return: list, liste des dossiers.
         """
 
         return os.listdir(self.get_path("Source"))
 
     def delete_folder(self, path):
         """
-        Suppression d'une liste de dossier
-        :param path: chemin d'accès du dossier à supprimer
+        Suppression d'une liste de dossier.
+        
+        :param path: Path, chemin d'accès du dossier à supprimer.
         """
 
         for folder in path:
@@ -260,8 +266,9 @@ class Paths:
 
     def create_folder(self, path):
         """
-        Suppression d'une liste de dossier
-        :param path: chemin d'accès du dossier à créer
+        Création d'une liste de dossier.
+        
+        :param path: Path, chemin d'accès du dossier à créer.
         """
 
         for folder in path:
@@ -273,3 +280,4 @@ class Paths:
                 except OSError as error:
                     self.__logger.error(
                         "Unable to create directory in path \'%s\'. Reason: %s" % (folder, error))
+
