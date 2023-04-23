@@ -8,18 +8,21 @@
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des libraries
+import os
+import sys
 import logging as log
 from progress.bar import IncrementalBar
 import psycopg2
-import os
 from datetime import datetime
 import csv
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des classes
-from core.paths.Paths import Paths
-from core.Constants import Constants
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]
+sys.path.append(os.path.dirname(PROJECT_DIR))
+from src.core.paths.Paths import Paths                              # NOQA
+from src.core.Constants import Constants                            # NOQA
 # ----------------------------------------------------------------------------------------------------------------------
 
 
