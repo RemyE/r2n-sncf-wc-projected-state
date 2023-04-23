@@ -1,6 +1,5 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtCharts 2.3
 
 // https://doc.qt.io/qt-5/qtqml-documents-definetypes.html
 // Comment créer un élément personalisé
