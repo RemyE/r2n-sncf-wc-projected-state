@@ -19,11 +19,13 @@ import logging as log
 import os.path
 import pathlib as pl
 import time
+import pandas as pd
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des classes
 from Parquet import Parquet
+from Database import Database
 # ----------------------------------------------------------------------------------------------------------------------
 
 
@@ -78,6 +80,25 @@ if __name__ == "__main__":
     # Fusionne les dossiers parquets pour lesquels il y a suite dans l'envoi des informations (soit pour une marche
     # d'exploitation supérieure à 30 minutes)
     parquet = Parquet(check_files=True, merge_parquet=True)
+
+    db = Database()
+    #db.list_databases()
+    db.test_connection()
+    db.list_databases()
+    #db.list_tables_and_export_data()
+    #db.create_database("regio")
+    #db.create_table("ma_table", [("id", "INTEGER"), ("name", "VARCHAR(255)")])
+    #db.list_tables_and_export_data()
+    #db.drop_table("ma_table")
+
+    db.create_table("ma_table", [("colonne1", "integer"), ("colonne2", "text")])
+    df = pd.DataFrame({
+        "colonne1": [1, 2, 3],
+        "colonne2": ["a", "b", "c"]
+    })
+    # Publication des données du DataFrame
+    db.publish_dataframe(df, "ma_table")
+    db.list_tables_and_export_data()
 
     # Fin de mesure de temps écoulé
     stop_time = time.time()
