@@ -1,9 +1,0 @@
-2023-04-23 20:45:03,921 - root - INFO - Log initialized
-2023-04-23 20:45:03,923 - Parquet - WARNING - The first Parquet data folder does not correspond to the first reading for the running of the train. This folder should be named 'z5500503_20220930_201805_0' however it is named 'z5500503_20220930_201805_1'
-2023-04-23 20:45:04,046 - Parquet - INFO - Parquet folders inspection completed in 0.124 seconds. 1 folders out of 26 were excluded
-2023-04-23 20:45:04,047 - Paths - INFO - Deleted directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\TT'
-2023-04-23 20:45:04,047 - Paths - INFO - Deleted directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\CTXT'
-2023-04-23 20:45:04,049 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\TT'
-2023-04-23 20:45:04,049 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\CTXT'
-2023-04-23 20:45:05,546 - Paths - INFO - Deleted directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge'
-2023-04-23 20:45:05,546 - Parquet - INFO - Parquet merging completed in 1.499 seconds. Merge of 26 initial folders to 16 folders

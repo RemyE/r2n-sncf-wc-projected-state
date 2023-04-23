@@ -245,20 +245,19 @@ class Database:
         data = [tuple(x) for x in df.to_numpy()]
 
         # Vérification si la table existe déjà dans la base de données
-        cur = self.conn.cursor()
-        cur.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = %s)", (table_name,))
-        table_exists = cur.fetchone()[0]
-        cur.close()
+       # cur = self.conn.cursor()
+        #cur.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = %s)", (table_name,))
+        #table_exists = cur.fetchone()[0]
+        #cur.close()
 
         # Insertion des données dans la table spécifiée
         cur = self.conn.cursor()
         try:
-            if table_exists:
-                # Concaténation des données existantes avec les nouvelles données
-                cur.execute(f"SELECT * FROM {table_name}")
-                existing_data = cur.fetchall()
-                data = existing_data + data
-                cur.execute(f"TRUNCATE {table_name}")
+            # Concaténation des données existantes avec les nouvelles données
+            cur.execute(f"SELECT * FROM {table_name}")
+            existing_data = cur.fetchall()
+            data = existing_data + data
+            cur.execute(f"TRUNCATE {table_name}")
             # Utilisation de execute_values pour une insertion rapide de données
             cur.execute(f"INSERT INTO {table_name} (colonne1, colonne2) VALUES %s", (data,))
             self.conn.commit()
