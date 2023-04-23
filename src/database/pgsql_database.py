@@ -32,6 +32,8 @@ class Database:
     """
 
     def __init__(self, autoconnect=True):
+        # TODO : définir une instance dans src/ui/UI_app à la place de BDD
+
         # Logging
         self.__logger = log.getLogger("Database")
 
@@ -59,6 +61,15 @@ class Database:
                     self.connect()
                 else:
                     raise e
+
+        # TODO : D'après ce que je comprend du code :
+        #   - Créer une BDD si elle n'existe pas
+        #   - Appeler la fonction pour lister les tables présentes, et la récupérer dans une liste
+        #   - Si une des table parmi celles nécessaires (ici on aura juste une table nommée 'water_level') n'existe pas, appelle la fonction create_database
+        #     Notre table a pour colonne : "code_mission", "jour", "clean_min", "clean_moy", "clean_max", "dirty_min", "dirty_moy", "dirty_max"
+        #     La colonne code_mission, jour sont des chaines de charactères de 64 et 16 max de longueur (pour avoir de la marge), les autres sont des nombres à virgules, précision 2/3 suffisante, toujours inférieur à 1000
+        #   - Importer les données traitées sauvegardées (à voir où ? Mais je suppose juste dans output)
+        #   - Importer les nouvelles données non traitées et les combines avec les données traitées déjà existantes (fonction que Flavie fera)
 
     def connect(self):
         """
@@ -107,7 +118,7 @@ class Database:
         for database in databases:
             self.__logger.info(database[0])
 
-        cursor.close()
+        cursor.close()      # TODO : retourner la liste des bases de données
 
     def create_database(self, db_name=None):
         """
@@ -284,3 +295,5 @@ class Database:
             cur.close()
         else:
             self.__logger.warning("Please connect to the database first.")
+
+    # TODO : reprendre mes 6 propriétés et les redéfinir ici en version SQL
