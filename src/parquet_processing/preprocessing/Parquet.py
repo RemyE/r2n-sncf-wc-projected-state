@@ -22,7 +22,7 @@ import time
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des classes
 from core.paths.ProjectRootPath import ProjectRootPath
-from pretreatment.ExclusionList import ExclusionList
+from parquet_processing.preprocessing.ExclusionList import ExclusionList
 from core.paths.Paths import Paths
 # ----------------------------------------------------------------------------------------------------------------------
 

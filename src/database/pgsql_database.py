@@ -8,21 +8,18 @@
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des libraries
-import os
-import sys
 import logging as log
 from progress.bar import IncrementalBar
 import psycopg2
+import os
 from datetime import datetime
 import csv
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des classes
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]
-sys.path.append(os.path.dirname(PROJECT_DIR))
-from src.core.paths.Paths import Paths                              # NOQA
-from src.core.Constants import Constants                            # NOQA
+from core.paths.Paths import Paths
+from core.Constants import Constants
 # ----------------------------------------------------------------------------------------------------------------------
 
 
@@ -32,8 +29,6 @@ class Database:
     """
 
     def __init__(self, autoconnect=True):
-        # TODO : définir une instance dans src/ui/UI_app à la place de BDD
-
         # Logging
         self.__logger = log.getLogger("Database")
 
@@ -61,15 +56,6 @@ class Database:
                     self.connect()
                 else:
                     raise e
-
-        # TODO : D'après ce que je comprend du code :
-        #   - Créer une BDD si elle n'existe pas
-        #   - Appeler la fonction pour lister les tables présentes, et la récupérer dans une liste
-        #   - Si une des table parmi celles nécessaires (ici on aura juste une table nommée 'water_level') n'existe pas, appelle la fonction create_database
-        #     Notre table a pour colonne : "code_mission", "jour", "clean_min", "clean_moy", "clean_max", "dirty_min", "dirty_moy", "dirty_max"
-        #     La colonne code_mission, jour sont des chaines de charactères de 64 et 16 max de longueur (pour avoir de la marge), les autres sont des nombres à virgules, précision 2/3 suffisante, toujours inférieur à 1000
-        #   - Importer les données traitées sauvegardées (à voir où ? Mais je suppose juste dans output)
-        #   - Importer les nouvelles données non traitées et les combines avec les données traitées déjà existantes (fonction que Flavie fera)
 
     def connect(self):
         """
@@ -118,7 +104,7 @@ class Database:
         for database in databases:
             self.__logger.info(database[0])
 
-        cursor.close()      # TODO : retourner la liste des bases de données
+        cursor.close()
 
     def create_database(self, db_name=None):
         """
@@ -295,5 +281,27 @@ class Database:
             cur.close()
         else:
             self.__logger.warning("Please connect to the database first.")
+
+    def fetch_data_from_table(self, table_name):
+        """
+        Récupère les données de la table spécifiée
+        :param table_name: Nom de la table dont les données doivent être récupérées
+        :return: Liste de dictionnaires contenant les données de la table
+        """
+        if self.conn is not None:
+            cur = self.conn.cursor()
+            try:
+                cur.execute(f"SELECT * FROM {table_name}")
+                rows = cur.fetchall()
+                column_names = [desc[0] for desc in cur.description]
+                data = [dict(zip(column_names, row)) for row in rows]
+                return data
+            except psycopg2.Error as e:
+                self.__logger.error(f"Error fetching data from table {table_name}: {e}")
+            finally:
+                cur.close()
+        else:
+            self.__logger.warning("Please connect to the database first.")
+
 
     # TODO : reprendre mes 6 propriétés et les redéfinir ici en version SQL

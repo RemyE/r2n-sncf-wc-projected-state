@@ -136,7 +136,7 @@ class UIapp:
                     log.debug(message)
 
 
-if __name__ == '__main__':
+def start_ui():
     # Génère un registre temporaire pour afficher les messages
     log.basicConfig(level=log.DEBUG,
                     format="%(asctime)s - %(levelname)s - %(message)s",
