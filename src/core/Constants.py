@@ -89,3 +89,21 @@ class Constants:
             str: Hôte de la base de données.
         """
         return Constants.HOST
+    
+    def get_db_port(self):
+        """
+        Retourne le port de la base de données.
+        
+        Returns:
+            str: Port de la base de données.
+        """
+        return Constants.PORT
+    
+    def get_db_database(self):
+        """
+        Retourne le nom de la base de données.
+        
+        Returns:
+            str: Nom de la base de données.
+        """
+        return Constants.DATABASE

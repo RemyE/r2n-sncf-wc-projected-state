@@ -1,31 +1,29 @@
-2023-04-23 21:21:29,063 - root - INFO - Log initialized
-2023-04-23 21:21:29,064 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge'
-2023-04-23 21:21:29,065 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\TT'
-2023-04-23 21:21:29,065 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\CTXT'
-2023-04-23 21:21:29,072 - Parquet - WARNING - The first Parquet data folder does not correspond to the first reading for the running of the train. This folder should be named 'z5500503_20220930_201805_0' however it is named 'z5500503_20220930_201805_1'
-2023-04-23 21:21:29,190 - Parquet - INFO - Parquet folders inspection completed in 0.125 seconds. 1 folders out of 26 were excluded
-2023-04-23 21:21:29,191 - Paths - INFO - Deleted directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\TT'
-2023-04-23 21:21:29,192 - Paths - INFO - Deleted directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\CTXT'
-2023-04-23 21:21:29,192 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\TT'
-2023-04-23 21:21:29,192 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\CTXT'
-2023-04-23 21:21:30,786 - Paths - INFO - Deleted directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge'
-2023-04-23 21:21:30,786 - Parquet - INFO - Parquet merging completed in 1.596 seconds. Merge of 26 initial folders to 16 folders
-2023-04-23 21:21:30,787 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge'
-2023-04-23 21:21:30,788 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\TT'
-2023-04-23 21:21:30,788 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\CTXT'
-2023-04-23 21:21:30,831 - Database - INFO - Successfully connected to PostgreSQL15
-2023-04-23 21:21:30,843 - Database - INFO - PostgreSQL version: PostgreSQL 15.2 (Debian 15.2-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit
-2023-04-23 21:21:30,844 - Database - INFO - Databases in current connection:
-2023-04-23 21:21:30,844 - Database - INFO - postgres
-2023-04-23 21:21:30,847 - Database - ERROR - Error creating table: permission denied for schema public
+2023-04-23 22:33:35,201 - root - INFO - Log initialized
+2023-04-23 22:33:35,204 - Parquet - WARNING - The first Parquet data folder does not correspond to the first reading for the running of the train. This folder should be named 'z5500503_20220930_201805_0' however it is named 'z5500503_20220930_201805_1'
+2023-04-23 22:33:35,329 - Parquet - INFO - Parquet folders inspection completed in 0.126 seconds. 1 folders out of 26 were excluded
+2023-04-23 22:33:35,330 - Paths - INFO - Deleted directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\TT'
+2023-04-23 22:33:35,331 - Paths - INFO - Deleted directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\CTXT'
+2023-04-23 22:33:35,331 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\TT'
+2023-04-23 22:33:35,331 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\CTXT'
+2023-04-23 22:33:36,862 - Paths - INFO - Deleted directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge'
+2023-04-23 22:33:36,862 - Parquet - INFO - Parquet merging completed in 1.533 seconds. Merge of 26 initial folders to 16 folders
+2023-04-23 22:33:36,864 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge'
+2023-04-23 22:33:36,864 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\TT'
+2023-04-23 22:33:36,865 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\CTXT'
+2023-04-23 22:33:37,041 - Database - INFO - Successfully connected to PostgreSQL15
+2023-04-23 22:33:37,045 - Database - INFO - PostgreSQL version: PostgreSQL 15.2 (Debian 15.2-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit
+2023-04-23 22:33:37,046 - Database - INFO - Databases in current connection:
+2023-04-23 22:33:37,046 - Database - INFO - postgres
+2023-04-23 22:33:37,046 - Database - ERROR - Error creating table: permission denied for schema public
 LINE 1: CREATE TABLE ma_table (colonne1 integer, colonne2 text)
                      ^
 
-2023-04-23 21:21:30,849 - Database - ERROR - Error publishing data: current transaction is aborted, commands ignored until end of transaction block
+2023-04-23 22:33:37,047 - Database - ERROR - Error publishing data: current transaction is aborted, commands ignored until end of transaction block
 
-2023-04-23 21:21:30,861 - Database - INFO - Successfully exported 0 tables to D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\Database_extracted_table
-2023-04-23 21:21:30,861 - root - INFO - Program successfully executed in 1.798 seconds
-2023-04-23 21:21:30,878 - root - INFO - Loading application.
+2023-04-23 22:33:37,052 - Database - INFO - Successfully exported 0 tables to D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\Database_extracted_table
+2023-04-23 22:33:37,052 - root - INFO - Program successfully executed in 1.852 seconds
+2023-04-23 22:33:37,071 - root - INFO - Loading application.
 
-2023-04-23 21:21:31,254 - root - INFO - Application chargée en 0.375 secondes.
-2023-04-23 21:21:34,895 - root - INFO - Fermeture de l'application après 4 secondes d'utilisation.
+2023-04-23 22:33:37,435 - root - INFO - Application chargée en 0.364 secondes.
+2023-04-23 22:33:43,567 - root - WARNING - Retrying to obtain clipboard.
+2023-04-23 22:33:52,150 - root - INFO - Fermeture de l'application après 15 secondes d'utilisation.
