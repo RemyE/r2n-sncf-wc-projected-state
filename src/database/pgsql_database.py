@@ -245,7 +245,7 @@ class Database:
         data = [tuple(x) for x in df.to_numpy()]
 
         # Vérification si la table existe déjà dans la base de données
-       # cur = self.conn.cursor()
+        # cur = self.conn.cursor()
         #cur.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = %s)", (table_name,))
         #table_exists = cur.fetchone()[0]
         #cur.close()
@@ -265,6 +265,33 @@ class Database:
         except psycopg2.Error as e:
             self.__logger.error(f"Error publishing data: {e}")
         cur.close()
+
+    def read_table_to_dataframe(self, table_name):
+        """
+        Lit les données d'une table dans la base de données PostgreSQL et les stocke dans un DataFrame Pandas.
+        :param table_name: Nom de la table à lire
+        :return: DataFrame contenant les données de la table
+        """
+
+        # Vérification si la table existe déjà dans la base de données
+        # cur = self.conn.cursor()
+        # cur.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = %s)", (table_name,))
+        # table_exists = cur.fetchone()[0]
+        # cur.close()
+
+        # if not table_exists:
+            # self.__logger.error(f"Table {table_name} does not exist.")
+            # return None
+
+        try:
+            # Utilisation de read_sql pour lire les données de la table dans un DataFrame
+            query = f"SELECT * FROM {table_name}"
+            df = pd.read_sql(query, self.conn)
+            self.__logger.info(f"Data read successfully from {table_name}.")
+            return df
+        except Exception as e:
+            self.__logger.error(f"Error reading data from {table_name}: {e}")
+            return None
 
     def publish_list(self, data):
         """

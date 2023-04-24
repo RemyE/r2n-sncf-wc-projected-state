@@ -1,0 +1,24 @@
+2023-04-24 23:06:54,224 - root - INFO - Log initialized
+2023-04-24 23:06:54,269 - Parquet - INFO - Parquet folders inspection completed in 0.043 seconds. 0 folders out of 8 were excluded
+2023-04-24 23:06:54,270 - Paths - INFO - Deleted directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\TT'
+2023-04-24 23:06:54,271 - Paths - INFO - Deleted directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\CTXT'
+2023-04-24 23:06:54,271 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\TT'
+2023-04-24 23:06:54,271 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\CTXT'
+2023-04-24 23:06:54,646 - Paths - INFO - Deleted directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge'
+2023-04-24 23:06:54,646 - Parquet - INFO - Parquet merging completed in 0.377 seconds. Merge of 8 initial folders to 6 folders
+2023-04-24 23:06:54,647 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge'
+2023-04-24 23:06:54,648 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\TT'
+2023-04-24 23:06:54,648 - Paths - INFO - Created directory in path 'D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\.Temp_parquet_merge\CTXT'
+2023-04-24 23:06:54,681 - Database - INFO - Successfully connected to PostgreSQL15
+2023-04-24 23:06:54,688 - Database - INFO - PostgreSQL version: PostgreSQL 15.2 (Debian 15.2-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit
+2023-04-24 23:06:54,691 - Database - INFO - Databases in current connection:
+2023-04-24 23:06:54,691 - Database - INFO - postgres
+2023-04-24 23:06:54,695 - Database - ERROR - Error creating table: permission denied for schema public
+LINE 1: CREATE TABLE ma_table (colonne1 integer, colonne2 text)
+                     ^
+
+2023-04-24 23:06:54,698 - Database - ERROR - Error publishing data: current transaction is aborted, commands ignored until end of transaction block
+
+2023-04-24 23:06:54,706 - Database - INFO - Successfully exported 0 tables to D:\Nextcloud\Fichiers\Scolaire\ESTACA\4A 22-23\Projet industriel\Data\Parquet\Database_extracted_table
+2023-04-24 23:06:54,706 - root - INFO - Program successfully executed in 0.483 seconds
+2023-04-24 23:06:54,734 - Database - INFO - Successfully connected to PostgreSQL15

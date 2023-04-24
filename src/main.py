@@ -1,7 +1,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # Description du projet : traitement des données WC R2N SNCF. Analyse les données et formate celles-ci
 # Date de création : 29/10/2022
-# Date de mise à jour : 15/11/2022
+# Date de mise à jour : 24/04/2022
 # Version : 1.0a1
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -15,16 +15,17 @@
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des libraries
+# Libraries par défaut
 import logging as log
 import os.path
 import pathlib as pl
 import time
 import pandas as pd
-# ----------------------------------------------------------------------------------------------------------------------
 
-# ----------------------------------------------------------------------------------------------------------------------
-# Imports des classes
+# Librairies de projet
 from parquet_processing.preprocessing.Parquet import Parquet
+from parquet_processing.processing.waterConsumptionAnalysis import WaterConsumptionAnalysis
+from parquet_processing.processing.dataAnalysis import DataAnalysis
 from database.pgsql_database import Database
 from ui import UI_app
 # ----------------------------------------------------------------------------------------------------------------------
@@ -109,5 +110,9 @@ if __name__ == "__main__":
     # Signaliement du temps d'exécution
     log.info("Program successfully executed in %s seconds" % elapsed_time)
 
+    # Traitement des données statistiques
+    consumption_analysis = WaterConsumptionAnalysis()
+    #data_analysis = DataAnalysis()
+    
     # Lancement de l'UI
     UI_app.start_ui()
