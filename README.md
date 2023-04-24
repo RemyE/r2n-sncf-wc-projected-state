@@ -4,12 +4,13 @@ The purpose of this project is to estimate the water consumption needs of toilet
 Knowing the water needs, we can forecast refueling needs more accurately and limit the immobilization of the trains due to lack of water.
 
 ## Libraries install
-You must install the numpy, pandas, progress, pyarrow, python-dateutil, pytz, six and PySide6 libraries.
+You must install the numpy, pandas, progress, pyarrow, python-dateutil, pytz, six, PySide6, snappy and spherogram libraries.
 ```
-python -m pip install numpy>=1.23.4 pandas>=1.5.1 progress>=1.6 pyarrow>=10.0.0 python-dateutil>=2.8.2 pytz>=2022.6 six>=1.16.0 PySide6~=6.4.2
+python -m pip install numpy>=1.23.4 pandas>=1.5.1 progress>=1.6 pyarrow>=10.0.0 python-dateutil>=2.8.2 pytz>=2022.6 six>=1.16.0 PySide6~=6.4.2 snappy>=3.0.3 spherogram>=2.1
 ```
 
 ## Setup
+The project has been tested with [Python 3.10.9](https://www.python.org/downloads/release/python-3109/).
 You have to:
 1. Git clones the project
 2. Fill in the path to which you want to create the software workspace in the file `./src/ProjectRootPath.py`, variable  `self.__project_path` (referenced as `project_root` below)
