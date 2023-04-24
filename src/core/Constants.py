@@ -20,11 +20,23 @@ class Constants:
     """
 
     # Initialisation des attributs de la classe Constants
+    # Constantes de la base de données PostgreSQL
     DATABASE = "postgres"  # postgres est la BDD par défaut. Adapter ce champ si nécessaire
     USER = None
     PASSWORD = None
     HOST = None
     PORT = None
+
+    # Colonnes des fichiers .parquet à conserver pour l'étude
+    PARQUET_KEPT_COL = ['time', 'unknown_IMISSIONTRAINNUMBER',
+       'WC_CAR01_LCST_IWCWORKTIMEINCOMSERVICE', 'WC_CAR03_LCST_IWCWORKTIMEINCOMSERVICE', 'WC_CAR05_LCST_IWCWORKTIMEINCOMSERVICE', 'WC_CAR07_LCST_IWCWORKTIMEINCOMSERVICE',
+       'WC_CAR01_LCST_IWSUTANKLEVEL', 'WC_CAR03_LCST_IWSUTANKLEVEL', 'WC_CAR05_LCST_IWSUTANKLEVEL', 'WC_CAR07_LCST_IWSUTANKLEVEL',
+       'WC_CAR01_LCST_IFWTANKCONTENT', 'WC_CAR03_LCST_IFWTANKCONTENT', 'WC_CAR05_LCST_IFWTANKCONTENT', 'WC_CAR07_LCST_IFWTANKCONTENT',
+       'WC_CAR01_LCST_IWWTANKCONTENT', 'WC_CAR03_LCST_IWWTANKCONTENT', 'WC_CAR05_LCST_IWWTANKCONTENT', 'WC_CAR07_LCST_IWWTANKCONTENT',
+       'WC_CAR01_LCST_IWATERTAPCNT', 'WC_CAR03_LCST_IWATERTAPCNT', 'WC_CAR05_LCST_IWATERTAPCNT',  'WC_CAR07_LCST_IWATERTAPCNT',
+       'WC_CAR01_LCST_FFWTEMPTY', 'WC_CAR03_LCST_FFWTEMPTY', 'WC_CAR05_LCST_FFWTEMPTY', 'WC_CAR07_LCST_FFWTEMPTY',
+       'WC_CAR01_LCST_IFLUSHCYCCNT', 'WC_CAR03_LCST_IFLUSHCYCCNT', 'WC_CAR05_LCST_IFLUSHCYCCNT', 'WC_CAR07_LCST_IFLUSHCYCCNT']
+
 
     def __init__(self):
         """
@@ -107,3 +119,12 @@ class Constants:
             str: Nom de la base de données.
         """
         return Constants.DATABASE
+    
+    def get_parquet_kept_col(self):
+        """
+        Retourne les colonnes des donénes .parquet à conserver
+        
+        Returns:
+            str: Nom des colonnes des donénes .parquet à conserver.
+        """
+        return Constants.PARQUET_KEPT_COL
