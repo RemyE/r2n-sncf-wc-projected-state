@@ -1,24 +1,36 @@
-# Default libraries
+# ----------------------------------------------------------------------------------------------------------------------
+# Nom du fichier : UI_app.py
+# Description du fichier :  implémente l'interface graphique et la logique d'une application de gestion des données
+# de trains
+# Date de création : 23/04/2023
+# Date de mise à jour : 24/04/2023
+# Créé par : Mathieu DENGLOS
+# Mis à jour par : Rémy EVRARD
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Imports des libraries
+# Libraries par défaut
 import os
 import sys
 import logging as log
 import time
 import re
 
-
-# Graphic libraries
+# Libraries graphiques
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtCore import QObject, QtMsgType, qInstallMessageHandler
 
-
-# Project libraries
+# Librairies de projet
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]
 sys.path.append(os.path.dirname(PROJECT_DIR))
 from src.ui.logic.UI_main import UImain                     # NOQA
 from src.ui.logic.UI_prediction import UIprediction         # NOQA
 from src.ui.logic.UI_operation import UIoperation           # NOQA
 from src.database.database import Database                  # NOQA
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 class UIapp:
@@ -32,7 +44,7 @@ class UIapp:
     operation_page: UIoperation = None
     prediction_page: UIprediction = None
 
-    # Basse de données train
+    # Base de données train
     database: Database = None
 
     # File path to the graphic file of the application
@@ -79,9 +91,11 @@ class UIapp:
 
         # Vérifie que la page a correctement été chargée, sinon jette une exception
         if not self.engine.rootObjects() and not os.path.isfile(UIapp.window_file_path):
-            raise FileNotFoundError(f"File \"{UIapp.window_file_path}\" was not found.")
+            raise FileNotFoundError(
+                f"File \"{UIapp.window_file_path}\" was not found.")
         elif not self.engine.rootObjects() and os.path.isfile(UIapp.window_file_path):
-            raise SyntaxError(f"File \"{UIapp.window_file_path}\" contains errors.")
+            raise SyntaxError(
+                f"File \"{UIapp.window_file_path}\" contains errors.")
         else:
             self.win = self.engine.rootObjects()[0]
 
@@ -95,7 +109,8 @@ class UIapp:
 
         # Montre la fenêtre et indique le temps de chargement de la page
         start_time = time.perf_counter()
-        log.info(f"Application chargée en {(start_time - initial_time):.3f} secondes.")
+        log.info(
+            f"Application chargée en {(start_time - initial_time):.3f} secondes.")
         self.win.show()
         QApplication.instance().exec()
 
@@ -104,7 +119,8 @@ class UIapp:
         qInstallMessageHandler(None)
 
         # Quand l'application se ferme, l'indique
-        log.info(f"Fermeture de l'application après {round(time.perf_counter() - start_time)} secondes d'utilisation.")
+        log.info(
+            f"Fermeture de l'application après {round(time.perf_counter() - start_time)} secondes d'utilisation.")
 
     @staticmethod
     def _qt_message_handler(mode, context, message) -> None:
@@ -127,7 +143,8 @@ class UIapp:
             # Pour chaque mode, met le message d'erreur sous le bon format et l'indique dans le registre
             match mode:
                 case QtMsgType.QtFatalMsg | QtMsgType.QtCriticalMsg:
-                    log.critical(f"Erreur Critique sur la fenêtre RAO : \n\t{message}")
+                    log.critical(
+                        f"Erreur Critique sur la fenêtre RAO : \n\t{message}")
                 case QtMsgType.QtWarningMsg | QtMsgType.QtSystemMsg:
                     log.warning(message)
                 case QtMsgType.QtInfoMsg:
@@ -137,26 +154,28 @@ class UIapp:
 
 
 def start_ui():
-    # Génère un registre temporaire pour afficher les messages
+    # Configure un registre temporaire pour afficher les messages
     log.basicConfig(level=log.DEBUG,
                     format="%(asctime)s - %(levelname)s - %(message)s",
                     datefmt="%H:%M:%S")
 
-    # Crée une instance de l'application, qui sera lancée automatiquement
+    # Crée et lance automatiquement une instance de l'application
     try:
         application = QApplication()
         UIapp()
     except KeyboardInterrupt:
+        # Déconnecte les messages de l'interface graphique en cas d'interruption
         qInstallMessageHandler(None)
         raise
     except Exception as error:
-
+        # Gère les exceptions en enregistrant les détails de l'erreur
         import traceback
-        log.error(" Traceback:\n\t\t\t\t"
-                  + "".join(traceback.format_tb(error.__traceback__)).replace("\n", "\n\t\t\t\t") + "\n\t\t\t"
-                  + "Critical error while loading or running the application.\n\t\t\t"
-                  + f"Error type: {type(error)}\n\t\t\t"
-                  + f"Message:\n\t\t\t\t{error}")
+        log.error("Traceback:"
+                  + "".join(traceback.format_tb(error.__traceback__)
+                            ).replace("\n", "\n\t")
+                  + "Critical error while loading or running the application."
+                  + f"Error type: {type(error)}"
+                  + f"Message: {error}")
 
         # Déconnecte les messages de l'interface graphique pour éviter une erreur de segmentation
         qInstallMessageHandler(None)

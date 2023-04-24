@@ -27,7 +27,6 @@ Item {
     property string visiblePeriod: "week"           // Valeurs possibles : "week", "month", "year", "all"
     onVisiblePeriodChanged: root.update()
 
-
     // Fonction de mise à jour des graphiques, à appeler à chaque fois que la marche visible ou la sélection change
     function update() {
         // Récupère la date limite de prise en compte
@@ -65,7 +64,7 @@ Item {
             datas[datas.length - 1].sort(function(a, b) {return a[0] - b[0]})
         }
 
-        // Redéfinit les valeurs (ce qui va mettre à jour les valeurs limites et les valeurs visibles
+        // Redéfinit les valeurs ce qui va mettre à jour les valeurs limites et les valeurs visibles
         operationChart.datas = datas
     }
 

@@ -1,67 +1,95 @@
-# Default libraries
+# ----------------------------------------------------------------------------------------------------------------------
+# Nom du fichier : UI_operation.py
+# Description du fichier : implémente une classe UIoperation pour gérer l'interface utilisateur d'une application,
+# avec des fonctions d'initialisation, de mise à jour et de sauvegarde des données d'opération et des
+# graphiques associés
+# Date de création : 23/04/2023
+# Date de mise à jour : 24/04/2023
+# Créé par : Mathieu DENGLOS
+# Mis à jour par : Rémy EVRARD
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Imports des libraries
+# Libraries par défaut
 import os
 import sys
 from typing import TYPE_CHECKING
 
-
 # Librairies graphiques
 from PySide6.QtCore import QObject
 
-
-# Project libraries
+# Librairies de projet
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]
 sys.path.append(os.path.dirname(PROJECT_DIR))
 if TYPE_CHECKING:
     from src.ui.UI_app import UIapp
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 class UIoperation:
-    """Classe pour le fonctionnement logique de la page"""
-    # fenêtre pour accéder aux autres pages
-    __app: "UIapp" = None
-    __component: QObject = None
+    """Classe gérant le fonctionnement logique de la page."""
 
-    output_folder_path: str = f"{PROJECT_DIR}output\\operation"
+    # Attributs pour stocker les références aux objets de l'interface utilisateur
+__app: "UIapp" = None
+__component: QObject = None
 
-    def __init__(self, ui_app):
-        """Initialise la page des marches
+output_folder_path: str = f"{PROJECT_DIR}output\\operation"
 
-        Parameters
-        ----------
-        ui_app: `UIapp`
-            Instance de l'application pour accéder aux autres pages
-        """
-        self.__app = ui_app
-        self.__component = self.__app.win.findChild(QObject, "operation")
 
-        # Connecte les différents signaux à leurs fonctions
-        self.__component.findChild(QObject, "returnButton").clicked.connect(self.__app.win.go_back)
-        self.__component.findChild(QObject, "saveButton").clicked.connect(self.save)
+def __init__(self, ui_app):
+    """
+    Initialise la page des marches.
 
-    def change_active(self, operation) -> None:
-        """Met à jour la marche active sur la page.
+    Parameters
+    ----------
+    ui_app : UIapp
+        Instance de l'application pour accéder aux autres pages.
+    """
+    self.__app = ui_app
+    self.__component = self.__app.win.findChild(QObject, "operation")
 
-        Parameters
-        ----------
-        operation: `str`
-            Nom de la marche à afficher.
-        """
-        # Récupère et mets à jour les données
-        self.__component.setProperty("operationName", operation)
-        self.__component.setProperty("cleanWaterData", self.__app.database.format_clean_water(operation))
-        self.__component.setProperty("poopooWaterData", self.__app.database.format_poopoo_water(operation))
+    # Connexion des signaux aux fonctions correspondantes
+    self.__component.findChild(
+        QObject, "returnButton").clicked.connect(self.__app.win.go_back)
+    self.__component.findChild(
+        QObject, "saveButton").clicked.connect(self.save)
 
-        # Met à jour les graphiques à l'aide de la fonction update
-        self.__component.update()
 
-    def save(self) -> None:
-        """Formate les données actuellement affichées et les sauvegardes."""
-        # Récupère le nom/numéro de l'opération
-        operation = self.__component.property("operationName")
+def change_active(self, operation) -> None:
+    """
+    Met à jour la marche active sur la page.
 
-        # Enregistre le fichier avec les informations, en supprimant la colonne du nom de l'opération
-        datas = self.__app.database.operation_database(operation)
-        datas = datas[datas.columns[~datas.columns.isin(['unknown_IMISSIONTRAINNUMBER'])]]
-        datas.to_csv(f"{UIoperation.output_folder_path}\\{operation}.csv")
-        with open(f"{UIoperation.output_folder_path}\\{operation}.txt", "w") as file:
-            file.write(datas.to_string())
+    Parameters
+    ----------
+    operation : str
+        Nom de la marche à afficher.
+    """
+    # Mise à jour des données de l'interface utilisateur
+    self.__component.setProperty("operationName", operation)
+    self.__component.setProperty(
+        "cleanWaterData", self.__app.database.format_clean_water(operation))
+    self.__component.setProperty(
+        "poopooWaterData", self.__app.database.format_poopoo_water(operation))
+
+    # Mise à jour des graphiques en utilisant la fonction update()
+    self.__component.update()
+
+
+def save(self) -> None:
+    """
+    Formate les données affichées et les sauvegarde.
+    """
+    # Récupération du nom/numéro de l'opération
+    operation = self.__component.property("operationName")
+
+    # Sauvegarde des informations dans un fichier CSV en supprimant la colonne du nom de l'opération
+    datas = self.__app.database.operation_database(operation)
+    datas = datas[datas.columns[~datas.columns.isin(
+        ['unknown_IMISSIONTRAINNUMBER'])]]
+    datas.to_csv(f"{UIoperation.output_folder_path}\\{operation}.csv")
+
+    # Sauvegarde des informations dans un fichier texte
+    with open(f"{UIoperation.output_folder_path}\\{operation}.txt", "w") as file:
+        file.write(datas.to_string())

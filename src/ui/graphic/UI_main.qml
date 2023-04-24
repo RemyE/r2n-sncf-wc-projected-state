@@ -3,26 +3,22 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import "../components"
 
-
 Item {
     id: root
 
-    // Prorpriétés sur la liste des marches
+    // Propriétés pour stocker la liste des noms et sources d'opérations
     property var operationNames: []
     property var operationSources: []
 
-    // Propriétés sur les couleurs utilisées
+    // Propriétés pour définir les couleurs utilisées dans le fichier QML
     property string backgroundColor: "#FFFFFF"
     property string textColor: "#949494"
     property string borderColor: "#949494"
 
-
-    // Signaux à surcharger en QML ou en Python
+    // Signal personnalisé pour gérer les clics sur les opérations
     signal operationClicked(string text)
 
-
-
-    // Listview pour les marches
+    // Conteneur principal pour afficher la liste des opérations
     Rectangle {
         id: operationBody
 
@@ -36,9 +32,7 @@ Item {
         border.width: 2
         border.color: root.borderColor
 
-
-
-        // Rectangle pour le titre
+        // Conteneur pour afficher le titre "Marches"
         Rectangle {
             id: operationTitle
 
@@ -51,7 +45,7 @@ Item {
             border.width: 2
             border.color: root.borderColor
 
-
+            // Texte du titre "Marches"
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -63,7 +57,7 @@ Item {
             }
         }
 
-        // Liste des marches à visualiser
+        // Liste des opérations à afficher
         ListView {
             id: operationView
 
@@ -82,6 +76,7 @@ Item {
 
             model: Math.min(root.operationNames.length, root.operationSources.length)
 
+            // Délégué pour afficher chaque élément de la liste des opérations
             delegate: UI_selector {
                 anchors.left: parent ? parent.left : undefined
                 anchors.right: parent ? parent.right : undefined
@@ -90,8 +85,7 @@ Item {
                 name: root.operationNames[index]
                 source: root.operationSources[index]
 
-
-                // Répétition des signaux
+                // Transmettre le signal lorsqu'un élément de la liste est cliqué
                 onClicked: function(text) {root.operationClicked(text)}
             }
 
@@ -100,7 +94,7 @@ Item {
     }
 
 
-    // Bouton pour l'outil de prédiction
+    // Bouton pour accéder à l'outil de prédiction
     UI_button {
         id: predictionButton
         objectName: "predictionButton"

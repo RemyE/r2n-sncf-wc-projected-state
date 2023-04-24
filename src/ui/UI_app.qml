@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.15
 import "components/"
 import "graphic/"
 
-
+// Fenêtre principale de l'application
 Window {
     id: window
     minimumWidth: 960
@@ -12,31 +12,35 @@ Window {
     title: "SNCF-toilet-data-analyser"
     color: window.backgroundColor
 
-    // Propriété sur les couleurs
+    // Propriété pour définir la couleur d'arrière-plan de la fenêtre
     property string backgroundColor: "#FFFFFF"
 
-    // Fonctions pour changer la page active
+    // Fonctions pour naviguer entre les pages
+
+    // Affiche la page principale et cache les autres
     function go_back() {
         operation.visible = false
         prediction.visible = false
         main.visible = true
     }
 
+    // Affiche la page de prédiction et cache les autres
     function show_prediction() {
         operation.visible = false
         main.visible = false
         prediction.visible = true
     }
 
+    // Affiche la page des opérations et cache les autres
     function show_operation() {
         prediction.visible = false
         main.visible = false
         operation.visible = true
     }
 
+    // Liste des pages de l'application
 
-
-    // liste des pages
+    // Page principale
     UI_main {
         id: main
         objectName: "main"
@@ -46,6 +50,7 @@ Window {
         visible: true
     }
 
+    // Page des opérations
     UI_operation {
         id: operation
         objectName: "operation"
@@ -55,6 +60,7 @@ Window {
         visible: false
     }
 
+    // Page des prédictions
     UI_prediction {
         id: prediction
         objectName: "prediction"

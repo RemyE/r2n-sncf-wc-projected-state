@@ -1,11 +1,9 @@
 # ----------------------------------------------------------------------------------------------------------------------
-# Nom du fichier : dataAnalysis.py
-# Description du fichier : analyse des données de consommation d'eau et de remplissage des réservoirs d'eaux usées 
-#   pour différentes missions de train
-# Date de création : 23/04/2023
-# Date de mise à jour : 23/04/2023
-# Créé par : Flavie CALIGARIS
-# Mis à jour par : Rémy EVRARD
+# Nom du fichier : ProjectRootPath.py
+# Description du fichier : classe "ProjectPath". Définit le chemin d'accès de la racine du projet
+# Date de création : 14/11/2022
+# Date de mise à jour : 15/11/2022
+# Créé par : Rémy EVRARD
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------

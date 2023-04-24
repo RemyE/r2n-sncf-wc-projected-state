@@ -25,32 +25,33 @@ from database.pgsql_database import Database
 from core.Constants import Constants
 # ----------------------------------------------------------------------------------------------------------------------
 
-# Création de l'objet de base de données PostgreSQL
+# Création de l'objet de base de données PostgreSQL.
 pg_db = Database()
 
-# Création de l'objet d'accès aux constantes
+# Création de l'objet d'accès aux constantes.
 consts = Constants()
 
-# Option d'affichage pour les df
+# Configuration des options d'affichage pour les DataFrames.
 pd.options.display.max_rows = 999
 pd.options.display.max_columns = None
 
-# ## Préparation de l'environnement
-
-# Choix des colonnes pour l'étude
+# Préparation de l'environnement.
+# Sélection des colonnes pour l'étude.
 col = consts.get_parquet_kept_col()
 
-# Adresse du répertoire des données à modifier
+# Chemin du répertoire contenant les données (à modifier).
 REP_DATA = 'D:/ESTACA/4A/Projet industriel/Données/Data_avril_23_04_06'
 
-# Liste des répertoires de données (contenant les fichiers parquet)
+# Liste des répertoires de données contenant les fichiers parquet.
 content_list = os.listdir(REP_DATA)
 
-# Création d'un dictionnaire pour les noms de rames (clé = rame, valeur = liste des répertoires)
-# C'est à dire qu'on ne garde que la premiere partie du nom des fichiers
+# Création d'un dictionnaire pour les noms de rames.
+# clé = rame, valeur = liste des répertoires.
+# Conservation uniquement de la première partie du nom des fichiers.
 racine_dict = {}
 for racine, group_rep in groupby(content_list, lambda nom: nom.split('_')[0]):
     racine_dict[racine] = list(group_rep)
+
 
 """CRÉATIONS DES INDICATEURS"""
 def cnt_missions(df):
