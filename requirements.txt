@@ -9,4 +9,9 @@ PySide6~=6.4.2
 snappy>=3.0.3
 spherogram>=2.1
 psycopg2>=2.9.6
+<<<<<<< HEAD
 matplotlib>=3.7.1
+=======
+matplotlib>=3.7.1
+seaborn>=0.12.2
+>>>>>>> eb86cf5307405e81d6abfd21e0942429991eb756
