@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # Nom du fichier : dataAnalysis.py
-# Description du fichier : analyse des données de consommation d'eau et de remplissage des réservoirs d'eaux usées 
+# Description du fichier : analyse des données de consommation d'eau et de remplissage des réservoirs d'eaux usées
 #   pour différentes missions de train
 # Date de création : 23/04/2023
 # Date de mise à jour : 23/04/2023
@@ -20,15 +20,26 @@ import math
 import pickle
 # ----------------------------------------------------------------------------------------------------------------------
 
+# ----------------------------------------------------------------------------------------------------------------------
+# Imports des classes
+from database.pgsql_database import Database
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+# Création de l'objet de base de données PostgreSQL
+pg_db = Database()
 
 # Options d'affichage pour les dataframes
 pd.options.display.max_rows = 999
 pd.options.display.max_columns = None
 
 # Fonction pour décoder les codes mission
+
+
 def decode_mission(m_num):
     m = str(m_num)
     return ''.join([chr(int(m[i:i + 2])) for i in range(0, len(m), 2)])
+
 
 # Chargement du dictionnaire de dataframes des rames en pickle
 # Dictionnaire avec clé = rame, valeur : toutes les données à la suite
@@ -44,7 +55,8 @@ with open('df_complet.pkl', 'rb') as file:
 # Groupement des données pour les différentes études
 
 # Nombre de jours de données disponible par mission
-df_jour_par_mission = df.groupby('unknown_IMISSIONTRAINNUMBER').jour.nunique().reset_index()
+df_jour_par_mission = df.groupby(
+    'unknown_IMISSIONTRAINNUMBER').jour.nunique().reset_index()
 
 # Nombre de jours de données disponible par rame
 df_jours_par_rame = df.groupby('rame').jour.nunique().reset_index()
@@ -60,9 +72,11 @@ df_traite_FWT = df.groupby(['unknown_IMISSIONTRAINNUMBER', 'jour']).conso_FWT_mi
     ['min', 'max', 'mean', 'median']).reset_index()
 
 # Repérage du dernier remplissage du réservoir d'eau claire
-df_date_FWT = df.loc[df.WC_CAR01_LCST_remplissage_FWT == 1, ['rame', 'jour']].sort_values(['rame', 'jour'])
+df_date_FWT = df.loc[df.WC_CAR01_LCST_remplissage_FWT ==
+                     1, ['rame', 'jour']].sort_values(['rame', 'jour'])
 df_date_FWT['date_ant_remp_FWT'] = df_date_FWT.groupby(['rame']).jour.shift(1)
-df_date_FWT['delta_remp_FWT'] = df_date_FWT.jour - df_date_FWT.date_ant_remp_FWT
+df_date_FWT['delta_remp_FWT'] = df_date_FWT.jour - \
+    df_date_FWT.date_ant_remp_FWT
 
 # Eaux usées
 
@@ -75,7 +89,8 @@ df_traite_WWT = df.groupby(['unknown_IMISSIONTRAINNUMBER', 'jour']).rempl_WWT_mi
     ['min', 'max', 'mean', 'median']).reset_index()
 
 # Repérage de la dernière vidange du réservoir d'eaux usées
-df_date_WWT = df.loc[df.WC_CAR01_LCST_vidange_WWT == 1, ['rame', 'jour']].sort_values(['rame', 'jour'])
+df_date_WWT = df.loc[df.WC_CAR01_LCST_vidange_WWT ==
+                     1, ['rame', 'jour']].sort_values(['rame', 'jour'])
 df_date_WWT['date_ant_vid_WWT'] = df_date_WWT.groupby(['rame']).jour.shift(1)
 df_date_WWT['delta_vid_WWT'] = df_date_WWT.jour - df_date_WWT.date_ant_vid_WWT
 
@@ -118,10 +133,12 @@ df_traite_FWT = df_traite_FWT.rename(columns={
 df_traite_WWT = df_traite_WWT.rename(columns={
                                      'min': 'dirtyMin', 'mean': 'dirtyMoy', 'max': 'dirtyMax', 'median': 'dirtyMed'})
 
-# Sauvegarde du df des rames pour l'eau claire en pickle
-with open('df_traite_FWT_novembre.pkl', 'wb') as file:
-    pickle.dump(df_traite_FWT, file)
 
-# Sauvegarde du df des rames pour les eaux usées en pickle
-with open('df_traite_WWT_novembre.pkl', 'wb') as file:
-    pickle.dump(df_traite_WWT, file)
+"""PUBLICATION DES DONNÉES SUR LA BDD"""
+# TODO : créer la table traite_FWT
+# Dataframe du réservoir FWT
+pg_db.publish_dataframe(df_traite_FWT, "traite_FWT")
+
+# TODO : créer la table traite_WWT
+# Dataframe du réservoir WWT
+pg_db.publish_dataframe(df_traite_WWT, "traite_WWT")
