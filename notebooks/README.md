@@ -9,7 +9,7 @@ La présente étude a été menée en utilisant les [notebooks jupyter](https://
 # Contenu du répertoire
 
 Le présent répertoire contient les notebooks qui ont été utilisés pour réaliser l'étude d'exploration des données fournies.
-* chargement.ipynb : parcours des répertoires contenant les fichiers parquet et création d'un dataframe sauvegardé au format pickle
+* chargement.ipynb : parcours des répertoires contenant les fichiers parquet et création d'un dataframe avec les indicateurs calculés sauvegardé au format pickle
 * explo_temporel.ipynb : réalise les analyses proprement dites ; génération d'une série de graphes et de tableaux
 * interface_mission.py : interface web s'appuyant sur streamlit pour permettre l'exploration des données "manuellement"
 * interface_simpliste.py : idem 
