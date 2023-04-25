@@ -3,7 +3,7 @@
 #   d'utilisation des systèmes WC pour en estimer les consommations d'eau
 # Date de création : 29/10/2022
 # Date de mise à jour : 25/04/2022
-# Version : 1.0a1
+# Version : 1.0
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -126,7 +126,7 @@ if __name__ == "__main__":
 
     # Lancement de l'UI d'analyse
     ui_app = UI_app.start_ui()
-    
+
     # Fin de mesure de temps écoulé
     stop_time = time.time()
     # Temps écoulé pour l'opération

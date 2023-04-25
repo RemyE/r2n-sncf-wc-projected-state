@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------------------------------------------------
-# Nom du fichier : Parquet.py
+# Nom du fichier : ParquetPreprocessing.py
 # Description du fichier : classe "Parquet". Effectue le traitement des fichiers .parquet
 # Date de création : 14/11/2022
 # Date de mise à jour : 15/11/2022

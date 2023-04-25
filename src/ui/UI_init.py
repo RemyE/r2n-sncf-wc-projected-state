@@ -1,12 +1,23 @@
+# ----------------------------------------------------------------------------------------------------------------------
+# Nom du fichier : UI_init.py
+# Description du fichier : interface d'initialsiation de la conenxion postgreSQL
+# Date de création : 25/04/2023
+# Date de mise à jour : 25/04/2023
+# Créé par : Rémy EVRARD
+# Mis à jour par : Rémy EVRARD
+# ----------------------------------------------------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Imports des libraries
+# Libraries par défaut
 import sys
 import os
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QRadioButton, QPushButton, QButtonGroup, QHBoxLayout
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QHBoxLayout
 from PySide6.QtCore import Slot, Signal
+
+# Librairies de projet
 from database.pgsql_database import Database
-from parquet_processing.preprocessing.ParquetPreprocessing import ParquetPreprocessing
-from parquet_processing.processing.waterConsumptionAnalysis import WaterConsumptionAnalysis
-from parquet_processing.processing.dataAnalysis import DataAnalysis
-from ui import UI_app
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 class UI_Init(QWidget):
@@ -74,8 +85,6 @@ class UI_Init(QWidget):
         # Charger les informations du fichier de configuration
         self.load_config_values()
 
-
-
     def load_config_values(self):
         file_path = "../../Configuration postgreSQL.txt"
 
@@ -132,7 +141,6 @@ class UI_Init(QWidget):
         self.db_name_input.clear()"""
         self.show()
 
-
     @Slot()
     def on_validate(self):
         username = self.username_input.text()
@@ -159,11 +167,9 @@ class UI_Init(QWidget):
             self.close()
             QApplication.quit()
 
-            
         else:
             self.show_again.emit()
 
     @Slot()
     def on_cancel(self):
         sys.exit()
-
