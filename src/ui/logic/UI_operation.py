@@ -9,7 +9,6 @@
 # Mis à jour par : Rémy EVRARD
 # ----------------------------------------------------------------------------------------------------------------------
 
-
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des libraries
 # Libraries par défaut
@@ -37,7 +36,6 @@ class UIoperation:
 
     output_folder_path: str = f"{PROJECT_DIR}output\\operation"
 
-
     def __init__(self, ui_app):
         """
         Initialise la page des marches.
@@ -55,7 +53,6 @@ class UIoperation:
             QObject, "returnButton").clicked.connect(self.__app.win.go_back)
         self.__component.findChild(
             QObject, "saveButton").clicked.connect(self.save)
-
 
     def change_active(self, operation) -> None:
         """
@@ -75,7 +72,6 @@ class UIoperation:
 
         # Mise à jour des graphiques en utilisant la fonction update()
         self.__component.update()
-
 
     def save(self) -> None:
         """

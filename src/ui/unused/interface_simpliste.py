@@ -1,6 +1,19 @@
+# ----------------------------------------------------------------------------------------------------------------------
+# Nom du fichier : interface_mission.py
+# Description du fichier : interface simpliste et temporaire, le temps de mettre en place l'UI principale
+# Date de création : 23/04/2023
+# Date de mise à jour : 25/04/2023
+# Créé par : Flavie CALIGARIS
+# Mis à jour par : Rémy EVRARD
+# ----------------------------------------------------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Imports des libraries
+# Libraries par défaut
 import streamlit as st # installer avec pip install et doc dans : https://docs.streamlit.io/
 import pickle
 import pandas as pd
+# ----------------------------------------------------------------------------------------------------------------------
 
 # on récupère notre dico de df
 # c'est la seule subtilité de streamlit : on ne veut pas charger le dico

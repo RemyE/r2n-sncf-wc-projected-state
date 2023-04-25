@@ -3,11 +3,10 @@
 # Description du fichier : Analyse de la consommation d'eau, du remplissage et de la vidange des réservoirs d'eaux
 #   usées pour différentes missions de train
 # Date de création : 23/04/2023
-# Date de mise à jour : 24/04/2023
+# Date de mise à jour : 25/04/2023
 # Créé par : Flavie CALIGARIS
 # Mis à jour par : Rémy EVRARD
 # ----------------------------------------------------------------------------------------------------------------------
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des libraries
@@ -18,8 +17,9 @@ import os
 from itertools import groupby
 import pickle
 import numpy as np
+import sys
 from pathlib import Path
-
+from progress.bar import IncrementalBar
 
 # Librairies de projet
 from database.pgsql_database import Database
@@ -40,8 +40,6 @@ class WaterConsumptionAnalysis():
         paths = Paths()
         # Chemin d'accès du dossier "Source" de parquet
         REP_DATA = paths.get_path("Source")
-        print("\n\npaths :")
-        print(REP_DATA)
 
         # Configuration des options d'affichage pour les DataFrames.
         pd.options.display.max_rows = 999
@@ -86,6 +84,9 @@ class WaterConsumptionAnalysis():
         #    - consommation d'eau claire pour la rame entière
         #    - remplissage du réservoir d'eaux usées pour la rame entière
 
+        progress_bar = IncrementalBar(
+            'Processing rame DataFrames', max=len(racine_dict), width=25)
+
         # Création d'un dictionnaire de DataFrames en fonction des rames
         # clé = rame, valeur = DataFrame de données
         dict_df = {}
@@ -93,20 +94,37 @@ class WaterConsumptionAnalysis():
         for rac, reps in racine_dict.items():
             df_list = []
 
+            # print(reps)
+            # print(rac)
             # Lecture de tous les fichiers qui se rapportent à la même rame
             # Traitement des erreurs s'il n'y a pas toutes les colonnes nécessaires dans le fichier
+
             for rep in reps:
                 # Convertissez l'objet WindowsPath en str en utilisant la méthode as_posix()
                 file_path = Path(REP_DATA, rep, 'TT_IP.parquet').as_posix()
+                # print("\n\nfile_path : ")
+                # print(file_path)
                 df_temp = pd.read_parquet(file_path)
-                try:
-                    df_temp = df_temp.loc[:, col].iloc[:-1]
-                except:
-                    print("erreur : ", rep)
+
+                # try:
+                # df_temp = df_temp.loc[:, col].iloc[:-1]
+                # except:
+                # print("Erreur : ", rep)
+                # continue
+
+                # Vérifie si toutes les colonnes sont présentes dans df_temp
+                missing_columns = [c for c in col if c not in df_temp.columns]
+
+                # S'il y a des colonnes manquantes, affiche un message d'erreur et continue avec le prochain fichier
+                if missing_columns:
+                    print(
+                        f"Erreur : {rep} - Colonnes manquantes : {', '.join(missing_columns)}")
                     continue
+                else:
+                    df_temp = df_temp.loc[:, col].iloc[:-1]
 
                 # Conversion du code mission en int pour que les 16 chiffres s'affichent
-                df_temp.unknown_IMISSIONTRAINNUMBER = df_temp.unknown_IMISSIONTRAINNUMBER.astype(
+                df_temp.x__IMISSIONTRAINNUMBER = df_temp.x__IMISSIONTRAINNUMBER.astype(
                     np.int64)
 
                 # Renommage de la colonne 'time'
@@ -121,11 +139,14 @@ class WaterConsumptionAnalysis():
                 df_list.append(df_temp)
 
             # Concaténation des DataFrames de la liste
-            df_concat = pd.concat(df_list, ignore_index=True)
+            if not df_list:
+                print("Aucun DataFrame à concaténer. Vérifiez vos données d'entrée.")
+            else:
+                df_concat = pd.concat(df_list, ignore_index=True)
 
             # Suppression des lignes où les codes missions sont à 0
             df_concat.drop(
-                df_concat.loc[df_concat['unknown_IMISSIONTRAINNUMBER'] == 0].index, inplace=True)
+                df_concat.loc[df_concat['x__IMISSIONTRAINNUMBER'] == 0].index, inplace=True)
 
             # Réinitialisation de l'index
             df_concat = df_concat.reset_index()
@@ -159,59 +180,77 @@ class WaterConsumptionAnalysis():
             # Lecture de toutes les missions possibles d'une rame
             for rame, datas in dict_df.items():
                 dict_mission_rame = {}
-                missions = datas.unknown_IMISSIONTRAINNUMBER.unique()
+                missions = datas.x__IMISSIONTRAINNUMBER.unique()
 
                 # Création d'un DataFrame pour chaque mission
                 for mission in missions:
                     df_temp = datas.query(
-                        'unknown_IMISSIONTRAINNUMBER == @mission')
+                        'x__IMISSIONTRAINNUMBER == @mission')
                     dict_mission_rame[mission] = df_temp
 
                 # Ajout dFu dictionnaire des missions au dictionnaire dict_missions
                 dict_missions[rame] = dict_mission_rame
 
-            # FIXME : repère deuxième partie de code
             """PUBLICATION DES DONNÉES SUR LA BDD"""
             """Dataframe des rames"""
             # Conversion du dictionnaire de dataframe en un dataframe unique
             frames = []
 
+            progress_bar = IncrementalBar(
+                'Processing DataFrames', max=len(dict_df), width=25)
             for rame, df in dict_df.items():
                 # Ajoute une colonne 'rame' avec la clé rame correspondante
                 df['rame'] = rame
                 frames.append(df)
+                progress_bar.next()
+            progress_bar.finish()
+            reset_progress_bar_position()
 
             # Concaténer tous les DataFrames individuels en un seul DataFrame
             df_rames = pd.concat(frames, ignore_index=True)
+            df_missions = pd.concat(frames, ignore_index=True)
+            df_complet = pd.concat(dict_df.values())
 
-            # Création de la table rames
-            pg_db.create_table("rames")
-            # Sauvegarde du dataframe des rames sur la BDD
-            pg_db.publish_dataframe(df_rames, "rames")
-
-            """Dataframe des missions en fonction des rames"""
             # Concaténer les dataframes individuels en un grand DataFrame pour obtenir un DataFrame "plat"
             # et non pas hiérarchique, qui plus adapté pour PostgreSQL
             frames = []
             for rame, missions in dict_missions.items():
                 for mission, df in missions.items():
-                    df['rame'] = rame
-                    df['mission'] = mission
+                    df.loc[:, 'rame'] = rame
+                    df.loc[:, 'mission'] = mission
+
                     frames.append(df)
 
-            df_missions = pd.concat(frames, ignore_index=True)
+            # Récupération des colonnes et types du dataframe
+            # print(df_missions.info(max_cols=500))
 
-            # Création de la table missions
-            pg_db.create_table("missions")
-            # Enregistrement du dataframe dans la BDD
-            pg_db.publish_dataframe(df_missions, "missions")
+            # Création des tables
+            progress_bar = IncrementalBar(
+                'Creating PostgreSQL tables', max=3, width=25)
+            pg_db.create_table("rames", consts.RAMES_PG_TABLE, recreate=True)
+            progress_bar.next()
+            pg_db.create_table(
+                "missions", consts.MISSIONS_PG_TABLE, recreate=True)
+            progress_bar.next()
+            pg_db.create_table(
+                "global_data", Constants.GLOBAL_DATA_PG_TABLE, recreate=True)
+            progress_bar.next()
+            progress_bar.finish()
+            reset_progress_bar_position()
 
-            """Dataframe global"""
-            # Sauvegarde de l'ensemble des dataframes dans la BDD
-            df_complet = pd.concat(dict_df.values())
-            # Création de la table global_data
-            pg_db.create_table("global_data")
-            pg_db.publish_dataframe(df_complet, "global_data")
+            # Sauvegarde du dataframe des rames sur la BDD
+            progress_bar = IncrementalBar(
+                'Publishing DataFrames to database', max=3, width=25)
+            pg_db.publish_dataframe(df_rames, "rames", truncate_table=True)
+            progress_bar.next()
+            pg_db.publish_dataframe(
+                df_missions, "missions", truncate_table=True)
+            progress_bar.next()
+            pg_db.publish_dataframe(
+                df_complet, "global_data", truncate_table=True)
+            progress_bar.next()
+            progress_bar.finish()
+            reset_progress_bar_position()
 
     """CRÉATIONS DES INDICATEURS"""
 
@@ -232,7 +271,7 @@ class WaterConsumptionAnalysis():
 
         # Parcours du DataFrame pour compter les missions
         for t in range(1, len(df)):
-            if df.unknown_IMISSIONTRAINNUMBER[t] != df.unknown_IMISSIONTRAINNUMBER[t-1]:
+            if df.x__IMISSIONTRAINNUMBER[t] != df.x__IMISSIONTRAINNUMBER[t-1]:
                 dg['nombre_mission'][t] = 1
                 mission += 1
             dg['cpt_mission'][t] = mission
@@ -258,7 +297,9 @@ class WaterConsumptionAnalysis():
             # Parcours du DataFrame pour détecter les remplissages
             for t in range(0, len(df)-1):
                 if (df['WC_'+voiture+'_LCST_IWSUTANKLEVEL'][t] < df['WC_'+voiture+'_LCST_IWSUTANKLEVEL'][t+1]) and (remplissage_en_cours == 0) and (df['WC_'+voiture+'_LCST_IWSUTANKLEVEL'][t] <= 25):
-                    df['WC_'+voiture+'_LCST_remplissage_WSU'][t] += 1
+                    # df['WC_'+voiture+'_LCST_remplissage_WSU'][t] += 1
+                    df.loc[t, 'WC_'+voiture+'_LCST_remplissage_WSU'] += 1
+
                     remplissage_en_cours = 1
                 if (df['WC_'+voiture+'_LCST_IWSUTANKLEVEL'][t] >= df['WC_'+voiture+'_LCST_IWSUTANKLEVEL'][t+1]):
                     remplissage_en_cours = 0
@@ -281,7 +322,9 @@ class WaterConsumptionAnalysis():
             # Parcours du DataFrame pour détecter les vidanges
             for t in range(0, len(df)-1):
                 if (df['WC_'+voiture+'_LCST_IWSUTANKLEVEL'][t] >= 95) and (vid_en_cours == 0):
-                    df['WC_'+voiture+'_LCST_vidange_WSU'][t] += 1
+                    # df['WC_'+voiture+'_LCST_vidange_WSU'][t] += 1
+                    df.at[t, 'WC_'+voiture+'_LCST_vidange_WSU'] += 1
+
                     vid_en_cours = 1
                 if (df['WC_'+voiture+'_LCST_IWSUTANKLEVEL'][t] < 95):
                     vid_en_cours = 0
@@ -363,3 +406,10 @@ class WaterConsumptionAnalysis():
                     rempli_en_cours = 1
                 if (df['WC_'+voiture+'_LCST_IFWTANKCONTENT'][t] >= df['WC_'+voiture+'_LCST_IFWTANKCONTENT'][t+1]):
                     rempli_en_cours = 0
+
+
+def reset_progress_bar_position():
+    """Remonte la sortie console de un niveau vers le haut
+    """
+    sys.stdout.write("\033[F")  # Déplacer le curseur vers le haut
+    sys.stdout.flush()

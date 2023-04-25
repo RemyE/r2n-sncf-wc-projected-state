@@ -1,13 +1,12 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # Nom du fichier : UI_app.py
-# Description du fichier :  implémente l'interface graphique et la logique d'une application de gestion des données
+# Description du fichier : implémente l'interface graphique et la logique d'une application de gestion des données
 # de trains
 # Date de création : 23/04/2023
-# Date de mise à jour : 24/04/2023
+# Date de mise à jour : 25/04/2023
 # Créé par : Mathieu DENGLOS
 # Mis à jour par : Rémy EVRARD
 # ----------------------------------------------------------------------------------------------------------------------
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des libraries

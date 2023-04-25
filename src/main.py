@@ -1,7 +1,8 @@
 # ----------------------------------------------------------------------------------------------------------------------
-# Description du projet : traitement des données WC R2N SNCF. Analyse les données et formate celles-ci
+# Description du projet : traitement des données WC R2N SNCF. Analyse les données et affiche des prévisions
+#   d'utilisation des systèmes WC pour en estimer les consommations d'eau
 # Date de création : 29/10/2022
-# Date de mise à jour : 24/04/2022
+# Date de mise à jour : 25/04/2022
 # Version : 1.0a1
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -21,6 +22,8 @@ import os.path
 import pathlib as pl
 import time
 import pandas as pd
+import warnings
+from pandas.errors import SettingWithCopyWarning
 
 # Librairies de projet
 from parquet_processing.preprocessing.Parquet import Parquet
@@ -71,6 +74,10 @@ if __name__ == "__main__":
         - glisser les dossiers parquet (exemple : "z5500503_20221001_031745_0") dans le dossier "Source".
     """
 
+    # Arrêt affichage warnings
+    warnings.simplefilter(action='ignore', category=SettingWithCopyWarning)
+    warnings.simplefilter(action='ignore', category=UserWarning)
+
     # Début de mesure de temps écoulé
     start_time = time.time()
 
@@ -81,26 +88,14 @@ if __name__ == "__main__":
     # Vérifie les dossiers de donnée parquet
     # Fusionne les dossiers parquets pour lesquels il y a suite dans l'envoi des informations (soit pour une marche
     # d'exploitation supérieure à 30 minutes)
-    parquet = Parquet(check_files=True, merge_parquet=True)
+    # parquet = Parquet(check_files=True, merge_parquet=True)
 
-    db = Database()
-    #db.list_databases()
-    db.test_connection()
-    db.list_databases()
-    #db.list_tables_and_export_data()
-    #db.create_database("regio")
-    #db.create_table("ma_table", [("id", "INTEGER"), ("name", "VARCHAR(255)")])
-    #db.list_tables_and_export_data()
-    #db.drop_table("ma_table")
-
-    db.create_table("ma_table", [("colonne1", "integer"), ("colonne2", "text")])
-    df = pd.DataFrame({
-        "colonne1": [1, 2, 3],
-        "colonne2": ["a", "b", "c"]
-    })
-    # Publication des données du DataFrame
-    db.publish_dataframe(df, "ma_table")
-    db.list_tables_and_export_data()
+    # db = Database()
+    # db.list_databases()
+    # db.test_connection()
+    # db.list_databases()
+    # db.list_tables_and_export_data()
+    # db.create_database("regio")
 
     # Fin de mesure de temps écoulé
     stop_time = time.time()
@@ -112,7 +107,7 @@ if __name__ == "__main__":
 
     # Traitement des données statistiques
     consumption_analysis = WaterConsumptionAnalysis()
-    #data_analysis = DataAnalysis()
-    
+    data_analysis = DataAnalysis()
+
     # Lancement de l'UI
     UI_app.start_ui()

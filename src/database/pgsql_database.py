@@ -1,8 +1,9 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # Nom du fichier : pgsql_database.py
 # Description du fichier : classe "Database". Gère la connexion et l'envoi des données vers la base de données
+#   postgreSQL 15
 # Date de création : 27/02/2023
-# Date de mise à jour : 15/03/2023
+# Date de mise à jour : 25/04/2023
 # Créé par : Rémy EVRARD
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -11,13 +12,13 @@
 import logging as log
 from progress.bar import IncrementalBar
 import psycopg2
+import pandas as pd
+from psycopg2.extras import execute_values
 import os
 from datetime import datetime
 import csv
-# ----------------------------------------------------------------------------------------------------------------------
 
-# ----------------------------------------------------------------------------------------------------------------------
-# Imports des classes
+# Librairies de projet
 from core.paths.Paths import Paths
 from core.Constants import Constants
 # ----------------------------------------------------------------------------------------------------------------------
@@ -38,7 +39,8 @@ class Database:
         # CHEMINS D'ACCÈS
         self.__paths = Paths()
         # Chemin d'accès du dossier "Database_extracted_table" de stockage des tables de la BDD
-        self.__database_extracted_table_path = self.__paths.get_path("Database_extracted_table")
+        self.__database_extracted_table_path = self.__paths.get_path(
+            "Database_extracted_table")
 
         # Initialisation des paramètres de connexion
         self.database = cons.get_db_database()
@@ -99,7 +101,8 @@ class Database:
         cursor = self.conn.cursor()
 
         # Récupérer la liste des bases de données dans la connexion en cours
-        cursor.execute("SELECT datname FROM pg_database WHERE datistemplate = false;")
+        cursor.execute(
+            "SELECT datname FROM pg_database WHERE datistemplate = false;")
         databases = cursor.fetchall()
 
         # Afficher les noms de bases de données
@@ -150,20 +153,40 @@ class Database:
                         # En cas d'erreur, affiche le message d'erreur dans le journal des logs
                         self.__logger.error(f"Error creating database: {e}")
 
-    def create_table(self, table_name, columns):
+    def create_table(self, table_name, columns, recreate=False):
         """
         Crée une table PostgreSQL avec les colonnes spécifiées
         :param table_name: Nom de la table à créer
         :param columns: Liste de tuples contenant le nom et le type de chaque colonne
+        :param recreate: Booléen indiquant si la table doit être supprimée et recréée si elle existe déjà
         """
         if self.conn is not None:
             cur = self.conn.cursor()
             try:
-                # Construction de la commande SQL pour créer la table avec les colonnes spécifiées
-                columns_str = ", ".join([f"{col[0]} {col[1]}" for col in columns])
-                cur.execute(f"CREATE TABLE {table_name} ({columns_str})")
-                self.conn.commit()
-                self.__logger.info(f"Table {table_name} created successfully.")
+                # Vérifie si la table existe déjà
+                cur.execute(f"SELECT to_regclass('{table_name}')")
+                table_exists = cur.fetchone()[0] is not None
+
+                if table_exists and recreate:
+                    cur.execute(f"DROP TABLE {table_name}")
+                    self.__logger.info(
+                        f"Table {table_name} dropped successfully.")
+
+                if not table_exists or recreate:
+                    # Remplacez 'integer' par 'bigint' si nécessaire
+                    modified_columns = [
+                        (col[0], "bigint" if col[1] == "integer" else col[1]) for col in columns]
+
+                    # Construction de la commande SQL pour créer la table avec les colonnes spécifiées
+                    columns_str = ", ".join(
+                        [f"{col[0]} {col[1]}" for col in modified_columns])
+                    cur.execute(f"CREATE TABLE {table_name} ({columns_str})")
+                    self.conn.commit()
+                    self.__logger.info(
+                        f"Table {table_name} created successfully.")
+                else:
+                    self.__logger.warning(
+                        f"Table {table_name} already exists and 'recreate' is not set to True.")
             except psycopg2.Error as e:
                 self.__logger.error(f"Error creating table: {e}")
             cur.close()
@@ -210,13 +233,15 @@ class Database:
             cursor.execute("ROLLBACK")
         except:
             pass
-        cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
+        cursor.execute(
+            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
         tables = cursor.fetchall()
 
         # Exporter les données de chaque table dans un fichier CSV
         for table in tables:
             table_name = table[0]
-            csv_file = os.path.join(self.__database_extracted_table_path, f"{table_name}.csv")
+            csv_file = os.path.join(
+                self.__database_extracted_table_path, f"{table_name}.csv")
             with open(csv_file, 'w', newline='') as file:
                 writer = csv.writer(file)
                 cursor.execute(f"SELECT * FROM {table_name}")
@@ -228,42 +253,50 @@ class Database:
                     writer.writerow(row)
             self.conn.commit()
 
-        self.__logger.info(f"Successfully exported {len(tables)} tables to {self.__database_extracted_table_path}")
+        self.__logger.info(
+            f"Successfully exported {len(tables)} tables to {self.__database_extracted_table_path}")
         cursor.close()
 
-    def publish_dataframe(self, df, table_name):
+    def publish_dataframe(self, df, table_name, truncate_table=False):
         """
         Insère les données d'un DataFrame dans la base de données PostgreSQL, en utilisant la méthode publish.
         Les données sont insérées dans la table spécifiée par table_name.
         Si des données existent déjà dans la table, les nouvelles données sont concaténées.
         :param df: DataFrame contenant les données à insérer
         :param table_name: Nom de la table dans laquelle insérer les données
+        :param truncate_table: Booléen indiquant si la table doit être vidée avant d'insérer de nouvelles données
         """
 
         # Conversion du DataFrame en un format adapté pour la méthode publish
-        #data = df.values.tolist()
         data = [tuple(x) for x in df.to_numpy()]
-
-        # Vérification si la table existe déjà dans la base de données
-        # cur = self.conn.cursor()
-        #cur.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = %s)", (table_name,))
-        #table_exists = cur.fetchone()[0]
-        #cur.close()
 
         # Insertion des données dans la table spécifiée
         cur = self.conn.cursor()
         try:
-            # Concaténation des données existantes avec les nouvelles données
-            cur.execute(f"SELECT * FROM {table_name}")
-            existing_data = cur.fetchall()
-            data = existing_data + data
-            cur.execute(f"TRUNCATE {table_name}")
-            # Utilisation de execute_values pour une insertion rapide de données
-            cur.execute(f"INSERT INTO {table_name} (colonne1, colonne2) VALUES %s", (data,))
+            if truncate_table:
+                # Vide la table si truncate_table est True
+                cur.execute(f"TRUNCATE {table_name}")
+                # Insère les données directement dans la table vide
+                column_names = ", ".join(df.columns)
+                query = f"INSERT INTO {table_name} ({column_names}) VALUES %s"
+                execute_values(cur, query, data)
+                execute_values(cur, query, data)
+            else:
+                # Concaténation des données existantes avec les nouvelles données
+                cur.execute(f"SELECT * FROM {table_name}")
+                existing_data = cur.fetchall()
+                data = existing_data + data
+                cur.execute(f"TRUNCATE {table_name}")
+                # Utilisation de execute_values pour une insertion rapide de données
+                column_names = ", ".join(df.columns)
+                query = f"INSERT INTO {table_name} ({column_names}) VALUES %s"
+                execute_values(cur, query, data)
+
             self.conn.commit()
             self.__logger.info("Data published successfully.")
         except psycopg2.Error as e:
             self.__logger.error(f"Error publishing data: {e}")
+            self.conn.rollback()
         cur.close()
 
     def read_table_to_dataframe(self, table_name):
@@ -280,8 +313,8 @@ class Database:
         # cur.close()
 
         # if not table_exists:
-            # self.__logger.error(f"Table {table_name} does not exist.")
-            # return None
+        # self.__logger.error(f"Table {table_name} does not exist.")
+        # return None
 
         try:
             # Utilisation de read_sql pour lire les données de la table dans un DataFrame
@@ -292,45 +325,3 @@ class Database:
         except Exception as e:
             self.__logger.error(f"Error reading data from {table_name}: {e}")
             return None
-
-    def publish_list(self, data):
-        """
-        Insère les données dans la base de données PostgreSQL
-        """
-
-        if self.conn is not None:
-            cur = self.conn.cursor()
-            try:
-                # Utilisation de execute_values pour une insertion rapide de données
-                cur.execute("INSERT INTO nom_table (colonne1, colonne2) VALUES (%s, %s)", data)
-                self.conn.commit()
-                self.__logger.info("Data published successfully.")
-            except psycopg2.Error as e:
-                self.__logger.error(f"Error publishing data: {e}")
-            cur.close()
-        else:
-            self.__logger.warning("Please connect to the database first.")
-
-    def fetch_data_from_table(self, table_name):
-        """
-        Récupère les données de la table spécifiée
-        :param table_name: Nom de la table dont les données doivent être récupérées
-        :return: Liste de dictionnaires contenant les données de la table
-        """
-        if self.conn is not None:
-            cur = self.conn.cursor()
-            try:
-                cur.execute(f"SELECT * FROM {table_name}")
-                rows = cur.fetchall()
-                column_names = [desc[0] for desc in cur.description]
-                data = [dict(zip(column_names, row)) for row in rows]
-                return data
-            except psycopg2.Error as e:
-                self.__logger.error(f"Error fetching data from table {table_name}: {e}")
-            finally:
-                cur.close()
-        else:
-            self.__logger.warning("Please connect to the database first.")
-
-
-    # TODO : reprendre mes 6 propriétés et les redéfinir ici en version SQL
