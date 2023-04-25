@@ -25,6 +25,7 @@ from progress.bar import IncrementalBar
 from database.pgsql_database import Database
 from core.Constants import Constants
 from core.paths.Paths import Paths
+from parquet_processing.preprocessing.ExclusionList import ExclusionList
 # ----------------------------------------------------------------------------------------------------------------------
 
 
@@ -35,6 +36,9 @@ class WaterConsumptionAnalysis():
 
         # Création de l'objet d'accès aux constantes.
         consts = Constants()
+
+        # Liste d'exclusion
+        exclusion_list = ExclusionList(create_file=False)
 
         # Chemins d'accès
         paths = Paths()
@@ -49,11 +53,11 @@ class WaterConsumptionAnalysis():
         # Sélection des colonnes pour l'étude.
         col = consts.get_parquet_kept_col()
 
-        # Chemin du répertoire contenant les données (à modifier).
-        # REP_DATA = 'D:/ESTACA/4A/Projet industriel/Données/Data_avril_23_04_06'
-
         # Liste des répertoires de données contenant les fichiers parquet.
-        content_list = os.listdir(REP_DATA)
+        content_list = exclusion_list.get_not_excluded()
+        # print(content_list)
+        # print("\n\n\n")
+        # print(type(content_list))
 
         # Création d'un dictionnaire pour les noms de rames.
         # clé = rame, valeur = liste des répertoires.
@@ -94,23 +98,13 @@ class WaterConsumptionAnalysis():
         for rac, reps in racine_dict.items():
             df_list = []
 
-            # print(reps)
-            # print(rac)
             # Lecture de tous les fichiers qui se rapportent à la même rame
             # Traitement des erreurs s'il n'y a pas toutes les colonnes nécessaires dans le fichier
 
             for rep in reps:
                 # Convertissez l'objet WindowsPath en str en utilisant la méthode as_posix()
                 file_path = Path(REP_DATA, rep, 'TT_IP.parquet').as_posix()
-                # print("\n\nfile_path : ")
-                # print(file_path)
                 df_temp = pd.read_parquet(file_path)
-
-                # try:
-                # df_temp = df_temp.loc[:, col].iloc[:-1]
-                # except:
-                # print("Erreur : ", rep)
-                # continue
 
                 # Vérifie si toutes les colonnes sont présentes dans df_temp
                 missing_columns = [c for c in col if c not in df_temp.columns]
@@ -297,7 +291,6 @@ class WaterConsumptionAnalysis():
             # Parcours du DataFrame pour détecter les remplissages
             for t in range(0, len(df)-1):
                 if (df['WC_'+voiture+'_LCST_IWSUTANKLEVEL'][t] < df['WC_'+voiture+'_LCST_IWSUTANKLEVEL'][t+1]) and (remplissage_en_cours == 0) and (df['WC_'+voiture+'_LCST_IWSUTANKLEVEL'][t] <= 25):
-                    # df['WC_'+voiture+'_LCST_remplissage_WSU'][t] += 1
                     df.loc[t, 'WC_'+voiture+'_LCST_remplissage_WSU'] += 1
 
                     remplissage_en_cours = 1

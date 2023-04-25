@@ -90,8 +90,10 @@ class Database:
             cur.execute("SELECT version()")
             self.__logger.info(f"PostgreSQL version: {cur.fetchone()[0]}")
             cur.close()
+            return True
         else:
             self.__logger.warning("Please connect to the database first.")
+            return False
 
     def list_databases(self):
         """

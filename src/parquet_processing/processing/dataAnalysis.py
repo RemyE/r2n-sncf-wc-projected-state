@@ -80,8 +80,9 @@ class DataAnalysis():
                              1, ['rame', 'jour']].sort_values(['rame', 'jour'])
         df_date_FWT['date_ant_remp_fwt'] = df_date_FWT.groupby(
             ['rame']).jour.shift(1)
-        df_date_FWT['delta_remp_fwt'] = df_date_FWT.jour - \
-            df_date_FWT.date_ant_remp_fwt
+        df_date_FWT['jour'] = pd.to_datetime(df_date_FWT['jour'])
+        df_date_FWT['date_ant_remp_fwt'] = pd.to_datetime(df_date_FWT['date_ant_remp_fwt'])
+        df_date_FWT['delta_remp_fwt'] = (df_date_FWT['jour'] - df_date_FWT['date_ant_remp_fwt']).dt.days
 
         # Eaux usées
         # ----------

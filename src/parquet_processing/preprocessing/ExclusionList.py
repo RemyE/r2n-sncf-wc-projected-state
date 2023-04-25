@@ -34,7 +34,8 @@ class ExclusionList:
         self.__dataPath = self.__paths.get_path("Data")
 
         # Chemin d'accès du fichier d'exclusion
-        self.__exclusion_list_file_path = self.__paths.get_path("parquet_exclusion")
+        self.__exclusion_list_file_path = self.__paths.get_path(
+            "parquet_exclusion")
 
         # Création du fichier d'exclusion si requis
         if create_file:
@@ -105,7 +106,7 @@ class ExclusionList:
         """
 
         # Ajoute les dossiers s'ils ne sont pas déjà présents dans la liste d'exclusion
-        with open(self.__exclusion_list_file_path, "a+") as exclusion_list_file:
+        with open(self.__exclusion_list_file_path, "r+") as exclusion_list_file:
             # Ajoute un texte d'entête au fichier à sa création
             if os.path.getsize(self.__exclusion_list_file_path) == 0:
                 exclusion_list_file.write(

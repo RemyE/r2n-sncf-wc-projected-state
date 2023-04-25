@@ -22,14 +22,19 @@ import os.path
 import pathlib as pl
 import time
 import pandas as pd
+import sys
 import warnings
 from pandas.errors import SettingWithCopyWarning
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QRadioButton, QPushButton, QButtonGroup, QHBoxLayout
+from PySide6.QtCore import Slot
 
 # Librairies de projet
-from parquet_processing.preprocessing.Parquet import Parquet
+from parquet_processing.preprocessing.ParquetPreprocessing import ParquetPreprocessing
 from parquet_processing.processing.waterConsumptionAnalysis import WaterConsumptionAnalysis
 from parquet_processing.processing.dataAnalysis import DataAnalysis
 from database.pgsql_database import Database
+from core.Constants import Constants
+from ui.UI_init import UI_Init
 from ui import UI_app
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -67,12 +72,23 @@ def configure_log():
     log.info("Log initialized")
 
 
+def handle_show_again():
+    """
+    Réaffichage de la fenêtre d'initialisation
+    """
+    # Réinitialiser et afficher à nouveau la fenêtre
+    ui_init.reset_and_show()
+
+
 if __name__ == "__main__":
     """
     INSTRUCTIONS :
         - renseigner le chemin d'accès de votre projet dans ProjectRootPath.py ;
         - glisser les dossiers parquet (exemple : "z5500503_20221001_031745_0") dans le dossier "Source".
     """
+
+    # Configuration du log
+    configure_log()
 
     # Arrêt affichage warnings
     warnings.simplefilter(action='ignore', category=SettingWithCopyWarning)
@@ -81,22 +97,36 @@ if __name__ == "__main__":
     # Début de mesure de temps écoulé
     start_time = time.time()
 
-    # Configuration du log
-    configure_log()
+    # Initialisssation des constantes
+    const = Constants()
+
+    # Interface d'initialisation
+    app = QApplication(sys.argv)
+    ui_init = UI_Init()
+    # ui_init.show_again.connect(handle_show_again)
+    ui_init.show()
+    app.exec()
 
     # Objet parquet, permettant de faire les traitements
     # Vérifie les dossiers de donnée parquet
     # Fusionne les dossiers parquets pour lesquels il y a suite dans l'envoi des informations (soit pour une marche
     # d'exploitation supérieure à 30 minutes)
-    # parquet = Parquet(check_files=True, merge_parquet=True)
+    parquet = ParquetPreprocessing(check_files=True, merge_parquet=False)
 
-    # db = Database()
-    # db.list_databases()
-    # db.test_connection()
-    # db.list_databases()
-    # db.list_tables_and_export_data()
-    # db.create_database("regio")
+    # Traitement des données statistiques
+    consumption_analysis = WaterConsumptionAnalysis()
+    data_analysis = DataAnalysis()
 
+    # Lancement de l'UI
+    # Vérifier et détruire l'instance actuelle de QApplication, si elle existe
+    current_app = QApplication.instance()
+    if current_app is not None:
+        current_app.quit()
+        current_app = None
+
+    # Lancement de l'UI d'analyse
+    ui_app = UI_app.start_ui()
+    
     # Fin de mesure de temps écoulé
     stop_time = time.time()
     # Temps écoulé pour l'opération
@@ -104,10 +134,3 @@ if __name__ == "__main__":
 
     # Signaliement du temps d'exécution
     log.info("Program successfully executed in %s seconds" % elapsed_time)
-
-    # Traitement des données statistiques
-    consumption_analysis = WaterConsumptionAnalysis()
-    data_analysis = DataAnalysis()
-
-    # Lancement de l'UI
-    UI_app.start_ui()
