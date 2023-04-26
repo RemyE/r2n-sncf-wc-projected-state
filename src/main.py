@@ -41,11 +41,46 @@ from src.ui.UI_app import UIapp                                     # NOQA
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-def configure_log():
-    """
-    Configuration du log
-    """
+# Liste des messages à ignorer de Qt (pour éviter un registre brouillon)
+qt_ignore = ("Found metadata in lib",
+             "Got keys from plugin meta data",
+             "loaded library",
+             "loaded plugins",
+             "looking at",
+             "checking directory path",
+             "QT_QUICK_CONTROLS_TEXT_SELECTION_BEHAVIOR")
 
+
+def _qt_message_handler(mode, context, message) -> None:
+    """[Fonction privée] récupére et d'affiche les messages d'erreurs des fichiers qml.
+
+    Parameters
+    ----------
+    mode: `QtCore.QtMsgType`
+        Niveau du message d'erreur (convertit en niveau de registre) ;
+    context: `QtCore.QMessageLogContext`
+        Contexte sur le message d'erreur (fichier, ligne, charactère) ;
+    message: `str`
+        Message associé à l'erreur.
+    """
+    # Vérifie que l'erreur ne fait pas partie des erreurs à sauter (pour éviter le spam en niveau debug)
+    if not any(ignore in message for ignore in qt_ignore):
+        message = (re.split(r':[0-9]+:[0-9]*:? *', message)[-1] +
+                   (f"\n\tline: {context.line} ; file: {context.file}" if context.file is not None else ""))
+
+        # Pour chaque mode, met le message d'erreur sous le bon format et l'indique dans le registre
+        if mode in (QtMsgType.QtFatalMsg, QtMsgType.QtCriticalMsg):
+            log.critical(f"Erreur Critique sur la fenêtre RAO : \n\t{message}")
+        elif mode in (QtMsgType.QtWarningMsg, QtMsgType.QtSystemMsg):
+            log.warning(message)
+        elif mode in (QtMsgType.QtInfoMsg,):
+            log.info(message)
+        else:
+            log.debug(message)
+
+
+def configure_log():
+    """Configure le registre"""
     # Chemin d'accès du dossier de log
     log_folder_path = ((pl.Path(__file__)).parent.parent.joinpath("log"))
 
@@ -75,9 +110,7 @@ def configure_log():
 
 
 def handle_show_again():
-    """
-    Réaffichage de la fenêtre d'initialisation
-    """
+    """Réaffichage de la fenêtre d'initialisation"""
     # Réinitialiser et afficher à nouveau la fenêtre
     ui_init.reset_and_show()
 
@@ -88,8 +121,7 @@ if __name__ == "__main__":
         - renseigner le chemin d'accès de votre projet dans ProjectRootPath.py ;
         - glisser les dossiers parquet (exemple : "z5500503_20221001_031745_0") dans le dossier "Source".
     """
-
-    # Configuration du log
+    # Configuration du registre
     configure_log()
 
     # Arrêt affichage warnings
