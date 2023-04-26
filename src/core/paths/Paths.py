@@ -2,14 +2,15 @@
 # Nom du fichier : Paths.py
 # Description du fichier : classe "Paths". Gère l'ensemble des chemins d'accès au projet
 # Date de création : 14/11/2022
-# Date de mise à jour : 23/04/2022
-# Créé par : Rémy EVRARD
+# Date de mise à jour : 26/04/2022
+# Créé par : Mathieu DENGLOS
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des libraries
-import logging as log
 import os
+import sys
+import logging as log
 from pathlib import Path
 import pathlib as pl
 import platform
@@ -19,7 +20,9 @@ import shutil as shu
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des classes
-from core.paths.ProjectRootPath import ProjectRootPath
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]
+sys.path.append(os.path.dirname(PROJECT_DIR))
+from src.core.paths.ProjectRootPath import ProjectRootPath          # NOQA
 # ----------------------------------------------------------------------------------------------------------------------
 
 

@@ -3,9 +3,9 @@
 # Description du fichier : implémente l'interface graphique et la logique d'une application de gestion des données
 # de trains
 # Date de création : 23/04/2023
-# Date de mise à jour : 25/04/2023
+# Date de mise à jour : 26/04/2023
 # Créé par : Mathieu DENGLOS
-# Mis à jour par : Rémy EVRARD
+# Mis à jour par : Mathieu DENGLOS
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -15,12 +15,11 @@ import os
 import sys
 import logging as log
 import time
-import re
 
 # Libraries graphiques
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
-from PySide6.QtCore import QObject, QtMsgType, qInstallMessageHandler
+from PySide6.QtCore import QObject
 
 # Librairies de projet
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]

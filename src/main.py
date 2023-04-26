@@ -21,21 +21,23 @@ import logging as log
 import os.path
 import pathlib as pl
 import time
-import pandas as pd
+import re
 import sys
 import warnings
-from pandas.errors import SettingWithCopyWarning
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QRadioButton, QPushButton, QButtonGroup, QHBoxLayout
-from PySide6.QtCore import Slot
+
+# Librairies graphiques
+from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QtMsgType, qInstallMessageHandler
 
 # Librairies de projet
-from parquet_processing.preprocessing.ParquetPreprocessing import ParquetPreprocessing
-from parquet_processing.processing.waterConsumptionAnalysis import WaterConsumptionAnalysis
-from parquet_processing.processing.dataAnalysis import DataAnalysis
-from database.pgsql_database import Database
-from core.Constants import Constants
-from ui.UI_init import UI_Init
-from ui import UI_app
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]
+sys.path.append(os.path.dirname(PROJECT_DIR))
+from src.parquet_processing.preprocessing.ParquetPreprocessing import ParquetPreprocessing      # NOQA
+from src.parquet_processing.processing.waterConsumptionAnalysis import WaterConsumptionAnalysis # NOQA
+from src.parquet_processing.processing.dataAnalysis import DataAnalysis# NOQA
+from src.core.Constants import Constants                            # NOQA
+from src.ui.UI_init import UIinit                                   # NOQA
+from src.ui.UI_app import UIapp                                     # NOQA
 # ----------------------------------------------------------------------------------------------------------------------
 
 

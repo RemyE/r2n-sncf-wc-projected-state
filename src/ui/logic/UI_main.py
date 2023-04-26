@@ -3,9 +3,9 @@
 # Description du fichier :  définit la classe UImain pour gérer l'interface principale de l'application, en initialisant
 # les pages, connectant les boutons et affichant les informations appropriées
 # Date de création : 23/04/2023
-# Date de mise à jour : 24/04/2023
+# Date de mise à jour : 26/04/2023
 # Créé par : Mathieu DENGLOS
-# Mis à jour par : Rémy EVRARD
+# Mis à jour par : Mathieu DENGLOS
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------

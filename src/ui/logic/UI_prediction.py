@@ -3,9 +3,9 @@
 # Description du fichier : implémente une classe UIprediction pour gérer l'interface utilisateur d'une page de
 # prédiction, avec initialisation, réinitialisation, récupération des données, mise à jour et sauvegarde des données.
 # Date de création : 23/04/2023
-# Date de mise à jour : 24/04/2023
+# Date de mise à jour : 26/04/2023
 # Créé par : Mathieu DENGLOS
-# Mis à jour par : Rémy EVRARD
+# Mis à jour par : Mathieu DENGLOS
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------

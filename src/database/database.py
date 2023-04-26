@@ -2,9 +2,9 @@
 # Nom du fichier : database.py
 # Description du fichier : base de données de l'utilitaire graphique
 # Date de création : 23/04/2023
-# Date de mise à jour : 25/04/2023
+# Date de mise à jour : 26/04/2023
 # Créé par : Mathieu DENGLOS
-# Mis à jour par : Rémy EVRARD
+# Mis à jour par : Mathieu DENGLOS
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -18,8 +18,10 @@ import re
 import pandas as pd
 
 # Librairies de projet
-from core.Constants import Constants
-from database.pgsql_database import Database
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]
+sys.path.append(os.path.dirname(PROJECT_DIR))
+from src.core.Constants import Constants                            # NOQA
+from src.database.pgsql_database import Database as PGDatabase      # NOQA
 # ----------------------------------------------------------------------------------------------------------------------
 
 
@@ -31,7 +33,7 @@ class Database:
     __database: pd.DataFrame = None
 
     data_folder_path: str = f"{PROJECT_DIR}\\src\\database\\"
-    pg_db = Database()
+    pg_db = PGDatabase()
 
     def __init__(self):
         """Initialise la base de données"""

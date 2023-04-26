@@ -1,10 +1,10 @@
 # ----------------------------------------------------------------------------------------------------------------------
-# Nom du fichier : UI_init.py
+# Nom du fichier : UIinit.py
 # Description du fichier : interface d'initialsiation de la conenxion postgreSQL
 # Date de création : 25/04/2023
-# Date de mise à jour : 25/04/2023
+# Date de mise à jour : 26/04/2023
 # Créé par : Rémy EVRARD
-# Mis à jour par : Rémy EVRARD
+# Mis à jour par : Mathieu DENGLOS
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -12,11 +12,19 @@
 # Libraries par défaut
 import sys
 import os
+import time
+import logging as log
+
+# Libraries graphiques
 from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QHBoxLayout
 from PySide6.QtCore import Slot, Signal
 
 # Librairies de projet
-from database.pgsql_database import Database
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]
+sys.path.append(os.path.dirname(PROJECT_DIR))
+from src.core.Constants import Constants                                      # NOQA
+from src.database.pgsql_database import Database                    # NOQA
+from src.ui.UI_app import UIapp                                     # NOQA
 # ----------------------------------------------------------------------------------------------------------------------
 
 

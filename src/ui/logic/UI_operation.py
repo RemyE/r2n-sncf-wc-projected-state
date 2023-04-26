@@ -4,9 +4,9 @@
 # avec des fonctions d'initialisation, de mise à jour et de sauvegarde des données d'opération et des
 # graphiques associés
 # Date de création : 23/04/2023
-# Date de mise à jour : 24/04/2023
+# Date de mise à jour : 26/04/2023
 # Créé par : Mathieu DENGLOS
-# Mis à jour par : Rémy EVRARD
+# Mis à jour par : Mathieu DENGLOS
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------

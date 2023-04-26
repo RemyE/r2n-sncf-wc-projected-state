@@ -3,24 +3,27 @@
 # Description du fichier : classe "Database". Gère la connexion et l'envoi des données vers la base de données
 #   postgreSQL 15
 # Date de création : 27/02/2023
-# Date de mise à jour : 25/04/2023
-# Créé par : Rémy EVRARD
+# Date de mise à jour : 26/04/2023
+# Créé par : Mathieu DENGLOS
 # ----------------------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des libraries
-import logging as log
-from progress.bar import IncrementalBar
-import psycopg2
-import pandas as pd
-from psycopg2.extras import execute_values
 import os
-from datetime import datetime
+import sys
+import logging as log
+import psycopg2
+from psycopg2.extras import execute_values
 import csv
 
+# Librairie de traitement de données
+import pandas as pd
+
 # Librairies de projet
-from core.paths.Paths import Paths
-from core.Constants import Constants
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]
+sys.path.append(os.path.dirname(PROJECT_DIR))
+from src.core.paths.Paths import Paths                              # NOQA
+from src.core.Constants import Constants                            # NOQA
 # ----------------------------------------------------------------------------------------------------------------------
 
 
