@@ -56,23 +56,17 @@ class UIapp:
         FileNotFoundError:
             jetée lorsque le fichier graphique principale n'est pas trouvé ;
         SyntaxError:
-            Jeté lorsque le fichier graphique contient des erreurs ;
-
+            Jeté lorsque le fichier graphique contient des erreurs.
         """
         # Récupère le temps initial pour indiquer le temps de chargement
         initial_time = time.perf_counter()
-        log.info("Loading application.\n")
+        log.info("Loading UI_app application.\n")
 
         # Jette une exception si la QApplication n'a pas été initialisée
         if QApplication.instance() is None:
-            raise RuntimeError(f"QApplication not loaded")
+            raise RuntimeError(f"QApplication must be loaded for UI_app to be initialised")
 
-        # Initialise la BDD
-        self.database = Database()
-
-        # Connecte le registre des fichiers graphiques avec le registre Python
-        os.environ["QT_DEBUG_PLUGINS"] = "1"
-        qInstallMessageHandler(UIapp._qt_message_handler)
+        # La base de données sera chargée par la suite
 
         # Charge la page principale de l'application
         self.engine = QQmlApplicationEngine()
@@ -80,11 +74,9 @@ class UIapp:
 
         # Vérifie que la page a correctement été chargée, sinon jette une exception
         if not self.engine.rootObjects() and not os.path.isfile(UIapp.window_file_path):
-            raise FileNotFoundError(
-                f"File \"{UIapp.window_file_path}\" was not found.")
+            raise FileNotFoundError(f"File \"{UIapp.window_file_path}\" was not found.")
         elif not self.engine.rootObjects() and os.path.isfile(UIapp.window_file_path):
-            raise SyntaxError(
-                f"File \"{UIapp.window_file_path}\" contains errors.")
+            raise SyntaxError(f"File \"{UIapp.window_file_path}\" contains errors.")
         else:
             self.win = self.engine.rootObjects()[0]
 
@@ -96,75 +88,25 @@ class UIapp:
         # Charge la page principale
         self.win.go_back()
 
-        # Montre la fenêtre et indique le temps de chargement de la page
-        start_time = time.perf_counter()
-        log.info(
-            f"Application chargée en {(start_time - initial_time):.3f} secondes.")
-        self.win.show()
-        QApplication.instance().exec()
+        # Indique le temps de chargement de la page
+        log.info(f"Application UI_app loaded in {(time.perf_counter() - initial_time):.3f} seconds.")
+        # Le QApplication sera a executer en dehors de la fonction
 
-        # Cache la fenêtre et déconnecte les messages
-        self.win.hide()
-        qInstallMessageHandler(None)
+    def show_ui(self):
+        """Montre la fenêtre."""
+        # Dans un premier temps initialise la BDD
+        if self.database is None:
+            self.database = Database()
 
-        # Quand l'application se ferme, l'indique
-        log.info(
-            f"Fermeture de l'application après {round(time.perf_counter() - start_time)} secondes d'utilisation.")
+        # Appelle la fonction pour montrer la fenêtre graphique pour chacune des pages
+        # FEATURE : dans le cas ou d'autres pages sont ajoutés, leurs fonctions d'affichage pourra être appelée ici
+        for page in (self.main_page, self.operation_page, self.prediction_page):
+            if page is not None and "show_ui" in dir(page):
+                page.show_ui()
 
-    @staticmethod
-    def _qt_message_handler(mode, context, message) -> None:
-        """[Fonction privée] récupére et d'affiche les messages d'erreurs des fichiers qml.
+        # Charge la page principale
+        self.win.go_back()
 
-        Parameters
-        ----------
-        mode: `QtCore.QtMsgType`
-            Niveau du message d'erreur (convertit en niveau de registre) ;
-        context: `QtCore.QMessageLogContext`
-            Contexte sur le message d'erreur (fichier, ligne, charactère) ;
-        message: `str`
-            Message associé à l'erreur.
-        """
-        # Vérifie que l'erreur ne fait pas partie des erreurs à sauter (pour éviter le spam en niveau debug)
-        if not any(ignore in message for ignore in UIapp.qt_ignore):
-            message = (re.split(r':[0-9]+:[0-9]*:? *', message)[-1] +
-                       (f"\n\tline: {context.line} ; file: {context.file}" if context.file is not None else ""))
-
-            # Pour chaque mode, met le message d'erreur sous le bon format et l'indique dans le registre
-            match mode:
-                case QtMsgType.QtFatalMsg | QtMsgType.QtCriticalMsg:
-                    log.critical(
-                        f"Erreur Critique sur la fenêtre RAO : \n\t{message}")
-                case QtMsgType.QtWarningMsg | QtMsgType.QtSystemMsg:
-                    log.warning(message)
-                case QtMsgType.QtInfoMsg:
-                    log.info(message)
-                case _:
-                    log.debug(message)
-
-
-def start_ui():
-    # Configure un registre temporaire pour afficher les messages
-    log.basicConfig(level=log.DEBUG,
-                    format="%(asctime)s - %(levelname)s - %(message)s",
-                    datefmt="%H:%M:%S")
-
-    # Crée et lance automatiquement une instance de l'application
-    try:
-        application = QApplication()
-        UIapp()
-    except KeyboardInterrupt:
-        # Déconnecte les messages de l'interface graphique en cas d'interruption
-        qInstallMessageHandler(None)
-        raise
-    except Exception as error:
-        # Gère les exceptions en enregistrant les détails de l'erreur
-        import traceback
-        log.error("Traceback:"
-                  + "".join(traceback.format_tb(error.__traceback__)
-                            ).replace("\n", "\n\t")
-                  + "Critical error while loading or running the application."
-                  + f"Error type: {type(error)}"
-                  + f"Message: {error}")
-
-        # Déconnecte les messages de l'interface graphique pour éviter une erreur de segmentation
-        qInstallMessageHandler(None)
+        # Montre la fenêtre graphique
+        if self.win is not None:
+            self.win.show()
