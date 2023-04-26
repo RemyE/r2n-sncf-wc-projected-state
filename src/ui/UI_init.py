@@ -32,7 +32,22 @@ class UI_Init(QWidget):
     validated = Signal(str, str, str, str, str)
     show_again = Signal()
 
-    def __init__(self):
+    # No file path to QML file necessary as window is made using Python
+
+    def __init__(self, main_app):
+        """Initialise la section UIinit de l'application.
+
+        ui_app: `UIapp`
+            Application principale pour affichage si les données sont valides.
+        """
+        # Récupère le temps initial pour indiquer le temps de chargement
+        initial_time = time.perf_counter()
+        log.info("Loading UIinit application.\n")
+
+        # Jette une exception si la QApplication n'a pas été initialisée
+        if QApplication.instance() is None:
+            raise RuntimeError(f"QApplication must be loaded for UIinit to be initialised")
+
         super().__init__()
 
         # Ajouter un attribut pour stocker les valeurs des champs
