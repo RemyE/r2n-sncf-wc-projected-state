@@ -8,9 +8,11 @@
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Imports des libraries
+import os
 import logging as log
 import psycopg2
-import os
+
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]
 # ----------------------------------------------------------------------------------------------------------------------
 
 class Constants:
@@ -26,6 +28,9 @@ class Constants:
     PASSWORD = None
     HOST = None
     PORT = None
+
+    # File path to the configuration file of the application
+    config_file_path: str = f"{PROJECT_DIR}Configuration postgreSQL.txt"
 
     # Colonnes des fichiers .parquet à conserver pour l'étude
     PARQUET_KEPT_COL = ['time', 'x__IMISSIONTRAINNUMBER',
