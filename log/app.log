@@ -1,1 +1,22 @@
-2023-04-25 15:30:10,449 - root - INFO - Log initialized
+2023-04-26 02:22:17,424 - root - INFO - Log initialized
+2023-04-26 02:22:17,437 - root - INFO - Loading UI_app application.
+
+2023-04-26 02:22:17,566 - root - INFO - Application UI_app loaded in 0.129 seconds.
+2023-04-26 02:22:17,566 - root - INFO - Loading UIinit application.
+
+2023-04-26 02:22:17,567 - root - INFO - Application UI_app loaded in 0.001 seconds.
+2023-04-26 02:22:17,629 - root - INFO - Application chargée en 0.205 secondes.
+2023-04-26 02:22:40,742 - Database - INFO - Successfully connected to PostgreSQL15
+2023-04-26 02:22:40,765 - Database - INFO - PostgreSQL version: PostgreSQL 15.2 (Debian 15.2-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit
+2023-04-26 02:22:49,445 - root - INFO - Application ouverte pendant 31.816 secondes.
+2023-04-26 02:22:49,451 - ParquetPreprocessing - INFO - Parquet source folder is empty. Please provide input data
+2023-04-26 02:22:49,451 - ParquetPreprocessing - INFO - Parquet folders inspection completed in 0.005 seconds. 0 folders out of 0 were excluded
+2023-04-26 02:23:10,577 - Database - INFO - Successfully connected to PostgreSQL15
+2023-04-26 02:23:31,694 - Database - INFO - Successfully connected to PostgreSQL15
+2023-04-26 02:23:31,726 - Database - ERROR - Error reading data from global_data: Execution failed on sql 'SELECT * FROM global_data': permission denied for table global_data
+
+2023-04-26 02:23:31,726 - root - ERROR - Traceback:  File "C:\Users\Home\Desktop\r2n-sncf-wc-projected-state\src\main.py", line 173, in <module>
+	    data_analysis = DataAnalysis()      # TODO : fin du TODO ici
+	  File "C:\Users\Home\Desktop\r2n-sncf-wc-projected-state\src\parquet_processing\processing\dataAnalysis.py", line 61, in __init__
+	    df_jour_par_mission = df.groupby(
+	Critical error while loading or running the application.Error type: <class 'AttributeError'>Message: 'NoneType' object has no attribute 'groupby'
