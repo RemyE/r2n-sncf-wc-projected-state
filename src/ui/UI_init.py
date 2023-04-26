@@ -28,9 +28,12 @@ from src.ui.UI_app import UIapp                                     # NOQA
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-class UI_Init(QWidget):
-    validated = Signal(str, str, str, str, str)
-    show_again = Signal()
+class UIinit(QWidget):
+    validated: Signal = Signal(str, str, str, str, str)
+    show_again: Signal = Signal()
+
+    # Link to the main application to show it once the user finished inputing the necessary configuration data
+    main_app: UIapp = None
 
     # No file path to QML file necessary as window is made using Python
 
@@ -108,6 +111,13 @@ class UI_Init(QWidget):
         # Charger les informations du fichier de configuration
         self.load_config_values()
 
+        # Indique le lien vers l'appliccation principale
+        self.main_app = main_app
+
+        # Indique le temps de chargement de la page
+        log.info(f"Application UI_app loaded in {(time.perf_counter() - initial_time):.3f} seconds.")
+        # Le QApplication sera a executer en dehors de la fonction
+
     def load_config_values(self):
         file_path = "../../Configuration postgreSQL.txt"
 
@@ -179,20 +189,28 @@ class UI_Init(QWidget):
         self.write_config_values()
 
         # Émettre le signal avec les valeurs des champs
-        self.validated.emit(username, password, host, port, db_name)
+        self.validated.emit(username, password, host, port, db_name)            # TODO : signal émit, mais jamais connecté ?
 
         # On teste la connexion à la base de données et on réaffiche la fenêtre si la connexion a échouée
         pg_db = Database()
         if pg_db.test_connection():
             # Fermer la fenêtre
-            self.validated.emit(username, password, host, port, db_name)
+            self.validated.emit(username, password, host, port, db_name)            # TODO : signal émit, mais jamais connecté ?
 
-            self.close()
-            QApplication.quit()
+            # Cache la fenêtre
+            self.hide()
+
+            # Si l'application principale a été indiquée, l'affichen sinon quitte et indique
+            if isinstance(self.main_app, UIapp):
+                self.main_app.show_ui()
+            else:
+                log.warning("UIapp was not referenced when initialising UIinit")
+                QApplication.instance().quit()
 
         else:
-            self.show_again.emit()
+            self.show_again.emit()      # TODO : A quoi sert d'appeler ce signal ? Supprimer, si mes modifications ont rendu le tuc fonctionnel
 
     @Slot()
     def on_cancel(self):
-        sys.exit()
+        self.hide()
+        QApplication.instance().quit()
