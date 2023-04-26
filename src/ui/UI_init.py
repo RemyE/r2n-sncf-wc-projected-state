@@ -119,10 +119,8 @@ class UIinit(QWidget):
         # Le QApplication sera a executer en dehors de la fonction
 
     def load_config_values(self):
-        file_path = "../../Configuration postgreSQL.txt"
-
-        if os.path.exists(file_path):
-            with open(file_path, "r") as f:
+        if os.path.exists(Constants.config_file_path):
+            with open(Constants.config_file_path, "r") as f:
                 lines = f.readlines()
 
             # Charger les valeurs des paramètres de connexion
@@ -139,9 +137,8 @@ class UIinit(QWidget):
                     self.db_name_input.setText(line.split(": ")[1].strip())
 
     def write_config_values(self):
-        file_path = "../../Configuration postgreSQL.txt"
-
-        with open(file_path, "r") as f:
+        """Ecrit le fichier de configuration en fonction des données entrées par l'utilisateur."""
+        with open(Constants.config_file_path, "r") as f:
             lines = f.readlines()
 
         # Mettre à jour les valeurs des paramètres de connexion
@@ -157,7 +154,7 @@ class UIinit(QWidget):
             elif "Nom de la base de données :" in line:
                 lines[i] = f"Nom de la base de données : {self.db_name_input.text()}\n"
 
-        with open(file_path, "w") as f:
+        with open(Constants.config_file_path, "w") as f:
             f.writelines(lines)
 
     def get_field_values(self):
