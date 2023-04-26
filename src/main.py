@@ -24,6 +24,7 @@ import time
 import re
 import sys
 import warnings
+from pandas.errors import SettingWithCopyWarning
 
 # Librairies graphiques
 from PySide6.QtWidgets import QApplication
