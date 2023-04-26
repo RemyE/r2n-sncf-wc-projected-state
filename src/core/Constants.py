@@ -10,6 +10,7 @@
 # Imports des libraries
 import os
 import logging as log
+import re
 import psycopg2
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__)).split("src")[0]
@@ -267,30 +268,29 @@ class Constants:
         Lit les paramètres de connexion à la base de données depuis un fichier de configuration
         et les attribue aux attributs de la classe Constants.
         """
-        # Lecture des identifiants de connexion dans le fichier texte
-        file_path = "../../Configuration postgreSQL.txt"
-
         # Crée le fichier s'il n'existe pas et y écrit les instructions
-        if not os.path.exists(file_path):
-            with open(file_path, "w") as f:
+        if not os.path.exists(Constants.config_file_path):
+            with open(Constants.config_file_path, "w") as f:
                 f.write("Ceci est le fichier de paramétrage d'accès la base de données PostgreSQL.\n\nATTENTION : la base de données par défaut est \"postgres\". Sans configuration préalable de postgreSQL, c'est cette base de données qu'il faut utiliser.\n\nVeuillez saisir vos informations de connexion :\nIdentifiant :\nMot de passe :\nHôte :\nPort :\nNom de la base de données : ")
 
         # Lecture du fichier et extraction des paramètres de connexion
-        with open(file_path, "r") as f:
+        with open(Constants.config_file_path, "r") as f:
             lines = f.readlines()
 
         # Affectation des paramètres lus aux attributs de la classe Constants
         for line in lines:
-            if "Identifiant :" in line:
-                Constants.USER = line.split(": ")[1].strip()
-            elif "Mot de passe :" in line:
-                Constants.PASSWORD = line.split(": ")[1].strip()
-            elif "Hôte :" in line:
-                Constants.HOST = line.split(": ")[1].strip()
-            elif "Port :" in line:
-                Constants.PORT = line.split(": ")[1].strip()
-            elif "Nom de la base de données :" in line:
-                Constants.DATABASE = line.split(": ")[1].strip() if line.split(":")[1].strip() else Constants.DATABASE
+            if re.match(r"^(?i)identifiant *: *.+$", line):
+                Constants.USER = re.split(r" *: *", line, maxsplit=1)[1].strip()
+            elif re.match(r"^(?i)mot de passe *: *.+$", line):
+                Constants.PASSWORD = re.split(r" *: *", line, maxsplit=1)[1].strip()
+            elif re.match(r"^(?i)h[oô]te *: *.+$", line):
+                Constants.HOST = re.split(r" *: *", line, maxsplit=1)[1].strip()
+            elif re.match(r"^(?i)port *: *.+$", line):
+                Constants.PORT = re.split(r" *: *", line, maxsplit=1)[1].strip()
+            elif re.match(r"^(?i)nom de la base de donn[eé]es *: *.+$", line):
+                Constants.DATABASE = (re.split(r" *: *", line, maxsplit=1)[1].strip()
+                                      if re.split(r" *: *", line, maxsplit=1)[1].strip()
+                                      else Constants.DATABASE)
 
     def get_db_user(self):
         """
