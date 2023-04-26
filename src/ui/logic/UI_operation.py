@@ -54,6 +54,10 @@ class UIoperation:
         self.__component.findChild(
             QObject, "saveButton").clicked.connect(self.save)
 
+    def show_ui(self):
+        """Execute les actions nécessaires pour rendre la fenêtre fonctionnelle."""
+        pass    # Aucune action actuellement nécessaire pour le fonctionnement de la page
+
     def change_active(self, operation) -> None:
         """
         Met à jour la marche active sur la page.

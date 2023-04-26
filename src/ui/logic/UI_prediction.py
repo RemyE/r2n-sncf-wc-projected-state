@@ -48,16 +48,17 @@ class UIprediction:
         self.__app = ui_app
         self.__component = self.__app.win.findChild(QObject, "prediction")
 
-        # Affichage des différentes valeurs de simulation
-        self.__component.setProperty(
-            "operations", self.__app.database.operations)
+        # Définition de la liste des opérations valides dans la fonction show_ui
 
         # Connexion des signaux aux fonctions correspondantes
         self.__component.dataChanged.connect(self.gather_data)
-        self.__component.findChild(
-            QObject, "returnButton").clicked.connect(self.__app.win.go_back)
-        self.__component.findChild(
-            QObject, "saveButton").clicked.connect(self.save)
+        self.__component.findChild(QObject, "returnButton").clicked.connect(self.__app.win.go_back)
+        self.__component.findChild(QObject, "saveButton").clicked.connect(self.save)
+
+    def show_ui(self):
+        """Execute les actions nécessaires pour rendre la fenêtre fonctionnelle."""
+        # Définition des différentes valeurs de simulation
+        self.__component.setProperty("operations", self.__app.database.operations)
 
     def reset(self) -> None:
         """Réinitialise la page de prédiction."""

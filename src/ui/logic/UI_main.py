@@ -49,16 +49,19 @@ class UImain:
         # Sauvegarde la page pour y accéder plus rapidement
         self.__component = self.__app.win.findChild(QObject, "main")
 
-        # Initialise les marches et les rames disponibles
-        self.__component.setProperty(
-            "operationNames", list(self.__app.database.operations))
-        self.__component.setProperty("operationSources", list(o_r.equivalent(operation)
-                                                              for operation in self.__app.database.operations))
+        # La liste des opérations disponibles et de leur image équivalent est chargée dans show_ui
 
         # Connecte les boutons aux fonctions appropriées
         self.__component.operationClicked.connect(self.on_operation_clicked)
         self.__component.findChild(QObject, "predictionButton").clicked.connect(
             self.on_prediction_clicked)
+
+    def show_ui(self):
+        """Execute les actions nécessaires pour rendre la fenêtre fonctionnelle."""
+        # Initialise les marches et les rames disponibles
+        self.__component.setProperty("operationNames", list(self.__app.database.operations))
+        self.__component.setProperty("operationSources", list(o_r.equivalent(operation)
+                                                              for operation in self.__app.database.operations))
 
     def on_operation_clicked(self, text) -> None:
         """
