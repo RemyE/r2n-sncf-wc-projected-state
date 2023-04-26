@@ -48,15 +48,6 @@ class UIapp:
     # File path to the graphic file of the application
     window_file_path: str = f"{PROJECT_DIR}src/ui/UI_app.qml"
 
-    # Liste des messages à ignorer de Qt (pour éviter un registre brouillon)
-    qt_ignore = ("Found metadata in lib",
-                 "Got keys from plugin meta data",
-                 "loaded library",
-                 "loaded plugins",
-                 "looking at",
-                 "checking directory path",
-                 "QT_QUICK_CONTROLS_TEXT_SELECTION_BEHAVIOR")
-
     def __init__(self):
         """Initialise the graphic and logic of the application
 
