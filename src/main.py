@@ -129,42 +129,57 @@ if __name__ == "__main__":
     warnings.simplefilter(action='ignore', category=UserWarning)
 
     # Début de mesure de temps écoulé
-    start_time = time.time()
+    initial_time = time.perf_counter()
 
     # Initialisssation des constantes
     const = Constants()
 
-    # Interface d'initialisation
+    # Interface d'initialisation et connexion au registre graphique
     app = QApplication(sys.argv)
-    ui_init = UI_Init()
-    # ui_init.show_again.connect(handle_show_again)
-    ui_init.show()
-    app.exec()
+    os.environ["QT_DEBUG_PLUGINS"] = "1"
+    qInstallMessageHandler(_qt_message_handler)
 
-    # Objet parquet, permettant de faire les traitements
-    # Vérifie les dossiers de donnée parquet
-    # Fusionne les dossiers parquets pour lesquels il y a suite dans l'envoi des informations (soit pour une marche
-    # d'exploitation supérieure à 30 minutes)
-    parquet = ParquetPreprocessing(check_files=True, merge_parquet=False)
+    # Encapsule toute l'initialisation des fenêtres graphiques dans un try/excep pour éviter
+    try:
+        # Initialise l'application principale, de telle sorte à ce qu'elle reste cachée
+        ui_app = UIapp()
 
-    # Traitement des données statistiques
-    consumption_analysis = WaterConsumptionAnalysis()
-    data_analysis = DataAnalysis()
+        # Initialise le popup d'entrée de valeurs et la montre
+        ui_init = UIinit(ui_app)
+        ui_init.show()
+        # ui_init.show_again.connect(handle_show_again)
 
-    # Lancement de l'UI
-    # Vérifier et détruire l'instance actuelle de QApplication, si elle existe
-    current_app = QApplication.instance()
-    if current_app is not None:
-        current_app.quit()
-        current_app = None
+        # Indique le temps de chargement
+        start_time = time.perf_counter()
+        log.info(f"Application chargée en {(start_time - initial_time):.3f} secondes.")
 
-    # Lancement de l'UI d'analyse
-    ui_app = UI_app.start_ui()
+        # Lance l'application (bloque le thread principal jusqu'à ce que l'utilisateur ferme l'une des fenêtres
+        app.exec()
 
-    # Fin de mesure de temps écoulé
-    stop_time = time.time()
-    # Temps écoulé pour l'opération
-    elapsed_time = str(round((stop_time - start_time), 3))
+        # Indique le temps d'ouverture de l'application
+        log.info(f"Application ouverte pendant {(time.perf_counter() - start_time):.3f} secondes.")
 
-    # Signaliement du temps d'exécution
-    log.info("Program successfully executed in %s seconds" % elapsed_time)
+        # TODO : A quoi servent ces trois lignes ci-dessous ? Je les aies mises à la fin car je ne sais pas à quoi elles servent et où les objets générés sont utilisés
+        # Objet parquet, permettant de faire les traitements
+        # Vérifie les dossiers de donnée parquet
+        # Fusionne les dossiers parquets pour lesquels il y a suite dans l'envoi des informations (soit pour une marche
+        # d'exploitation supérieure à 30 minutes)
+        parquet = ParquetPreprocessing(check_files=True, merge_parquet=False)
+
+        # Traitement des données statistiques
+        consumption_analysis = WaterConsumptionAnalysis()
+        data_analysis = DataAnalysis()      # TODO : fin du TODO ici
+    except KeyboardInterrupt:
+        # Déconnecte les messages de l'interface graphique en cas d'interruption
+        qInstallMessageHandler(None)
+        raise
+    except Exception as error:
+        # Gère les exceptions en enregistrant les détails de l'erreur
+        import traceback
+
+        log.error("Traceback:"
+                  + "".join(traceback.format_tb(error.__traceback__)
+                            ).replace("\n", "\n\t")
+                  + "Critical error while loading or running the application."
+                  + f"Error type: {type(error)}"
+                  + f"Message: {error}")
