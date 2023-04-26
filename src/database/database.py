@@ -148,7 +148,7 @@ class Database:
                  for operation in operations]
 
         return [[float(point.iloc[0][data_type]) if not point.empty else 0.0
-                 for data_type in ("cleanMin", "cleanMoy", "cleanMax")] for point in datas]
+                 for data_type in ("clearMin", "clearMoy", "clearMax")] for point in datas]
 
     def poopoo_water_evolution(self, operations: list[str]) -> list[list[float], list[float], list[float]]:
         datas = [self.operation_database(operation).tail(1)
